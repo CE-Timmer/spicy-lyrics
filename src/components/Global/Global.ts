@@ -1,7 +1,10 @@
 import Event from "../../utils/EventManager.ts";
+import { ProjectName } from "../../../project/config.ts";
 
-window._spicy_lyrics = {};
-const SCOPE_ROOT = window._spicy_lyrics;
+const GLOBAL_SCOPE_KEY = ProjectName === "dockbridge" ? "_dockbridge" : "_spicy_lyrics";
+
+window[GLOBAL_SCOPE_KEY] = window[GLOBAL_SCOPE_KEY] ?? {};
+const SCOPE_ROOT = window[GLOBAL_SCOPE_KEY];
 
 const Global = {
   Scope: SCOPE_ROOT,

@@ -1,4 +1,6 @@
-const prefix = "SpicyLyrics-";
+import { ProjectName } from "../../project/config.ts";
+
+const prefix = ProjectName === "dockbridge" ? "DockBridge-" : "SpicyLyrics-";
 
 let currentlyFetching = false;
 

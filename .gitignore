@@ -41,14 +41,11 @@ bower_components
 .lock-wscript
 
 # Compiled binary addons (https://nodejs.org/api/addons.html)
-build/Release
 
 # Dependency directories
-node_modules/
-jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)
-web_modules/
+
 
 # TypeScript cache
 *.tsbuildinfo
@@ -142,34 +139,6 @@ out
 .svelte-kit
 
 # End of https://www.toptal.com/developers/gitignore/api/node
-
-
-dist/
-dist_legacy/
-
-src/utils/SpicyHasher.ts
-
-.github/
-
-src/components/PopupModal/
-src/components/PopupModal/PopupModal.ts
-
-src/packages/
-
-
-public-storage/
-
-API_TERMS.md
-
-
-# build files
-/dist
-
-# production
-/build
-.spicetify/
-
-__dev-scripts/
 
 # upcoming feature leak..?
 src/components/cli-sync

@@ -1,6 +1,8 @@
 import Global from "../Global/Global.ts";
 import { SpotifyPlayer } from "../Global/SpotifyPlayer.ts";
 import storage from "../../utils/storage.ts";
+import fetchLyrics from "../../utils/Lyrics/fetchLyrics.ts";
+import ApplyLyrics from "../../utils/Lyrics/Global/Applyer.ts";
 
 const BRIDGE_URL = "http://127.0.0.1:61337/v1/current-track";
 const OUTPUT_LEAD_MS = 140;
@@ -8,6 +10,7 @@ const STREAM_HEARTBEAT_MS = 320;
 const AGGRESSIVE_HEARTBEAT_MS = 180;
 const KEEPALIVE_PULSE_MS = 900;
 const PROGRESS_BUCKET_MS = 250;
+const LYRICS_REFRESH_COOLDOWN_MS = 2000;
 
 let started = false;
 let lastPayloadHash = "";
@@ -25,6 +28,7 @@ let latestSongEventTrack: {
   album: string;
   durationMs: number;
 } | null = null;
+const lastLyricsRefreshAtByTrack = new Map<string, number>();
 
 type SpicyLine = {
   time: number;
@@ -555,6 +559,26 @@ function payloadHash(payload: any): string {
   });
 }
 
+async function refreshLyricsForCurrentTrack(trackId: string) {
+  const now = Date.now();
+  const lastRefreshAt = lastLyricsRefreshAtByTrack.get(trackId) ?? 0;
+  if (now - lastRefreshAt < LYRICS_REFRESH_COOLDOWN_MS) return;
+  lastLyricsRefreshAtByTrack.set(trackId, now);
+
+  const uri =
+    Spicetify?.Player?.data?.item?.uri ??
+    (trackId ? `spotify:track:${trackId}` : "");
+  if (!uri) return;
+
+  try {
+    const fetched = await fetchLyrics(String(uri));
+    await ApplyLyrics(fetched);
+    lastPayloadHash = "";
+  } catch {
+    // best effort; next heartbeat can retry
+  }
+}
+
 async function flushBridge() {
   const now = Date.now();
   if (pending && now - pendingSinceMs > 2500) {
@@ -601,6 +625,10 @@ async function flushBridge() {
         // ignore malformed lyrics cache
       }
     }
+    if (!lyrics.length && !noLyrics) {
+      void refreshLyricsForCurrentTrack(track.trackId);
+    }
+
     const stabilized = stabilizePlaybackPacket(track);
     const payload = { ...stabilized, lyrics, noLyrics };
     const hash = payloadHash(payload);

@@ -55,7 +55,7 @@ import UpdateDialog from "./components/ReactComponents/UpdateDialog.tsx";
 import { IsPIP, OpenPopupLyrics, ClosePopupLyrics } from "./components/Utils/PopupLyrics.ts";
 import ReactDOM from "react-dom/client";
 import { PopupModal } from "./components/Modal.ts";
-import { ProjectVersion } from "../project/config.ts";
+import { ProjectName, ProjectVersion } from "../project/config.ts";
 import { runThemeMatcher } from "./utils/themeMatcher.ts";
 import { setupSpotifyDockBridge } from "./components/Utils/SpotifyDockBridge.ts";
 
@@ -68,6 +68,8 @@ import { setupSpotifyDockBridge } from "./components/Utils/SpotifyDockBridge.ts"
 
 async function main() {
   await Platform.OnSpotifyReady;
+  const isDockBridgeBuild = ProjectName === "dockbridge";
+  const metadataKey = isDockBridgeBuild ? "_dockbridge_metadata" : "_spicy_lyrics_metadata";
 
   Global.SetScope("fullscreen.open", false);
 
@@ -198,8 +200,8 @@ async function main() {
     Defaults.hide_npv_bg = storage.get("hide_npv_bg") === "true";
   }
 
-  Defaults.SpicyLyricsVersion = window._spicy_lyrics_metadata?.LoadedVersion ?? ProjectVersion;
-  window._spicy_lyrics_metadata = {}
+  Defaults.SpicyLyricsVersion = window[metadataKey]?.LoadedVersion ?? ProjectVersion;
+  window[metadataKey] = {};
 
   /* if (storage.get("lyrics_spacing")) {
     if (storage.get("lyrics_spacing") === "None") {
@@ -378,86 +380,80 @@ async function main() {
         }
   `;
 
-  skeletonStyle.id = "spicyLyrics-additionalStyling";
+  skeletonStyle.id = isDockBridgeBuild
+    ? "dockbridge-additionalStyling"
+    : "spicyLyrics-additionalStyling";
   document.head.appendChild(skeletonStyle);
 
   App.SetReady();
 
   let ButtonList: any;
-  if (SpotifyPlayer.Playbar?.Button) {
+  if (!isDockBridgeBuild && SpotifyPlayer.Playbar?.Button) {
     ButtonList = [
-      {
-        Registered: false,
-        Button: new SpotifyPlayer.Playbar.Button(
-          "Spicy Lyrics",
-          Icons.LyricsPage,
-          (self) => {
-            if (!self.active) {
-              /* const isNewFullscreen = document.querySelector<HTMLElement>(".QdB2YtfEq0ks5O4QbtwX .WRGTOibB8qNEkgPNtMxq");
-                if (isNewFullscreen) {
-                  PageView.Open();
-                  self.active = true;
-                } else { */
-              Session.Navigate({ pathname: "/SpicyLyrics" });
-              if (Global.Saves.shift_key_pressed) {
-                const pageWhentil = Whentil.When(
-                  () => document.querySelector<HTMLElement>(".Root__main-view #SpicyLyricsPage"),
-                  () => {
-                    Fullscreen.Open(true);
-                    pageWhentil?.Cancel();
+      ...(!isDockBridgeBuild
+        ? [
+            {
+              Registered: false,
+              Button: new SpotifyPlayer.Playbar.Button(
+                "Spicy Lyrics",
+                Icons.LyricsPage,
+                (self) => {
+                  if (!self.active) {
+                    Session.Navigate({ pathname: "/SpicyLyrics" });
+                    if (Global.Saves.shift_key_pressed) {
+                      const pageWhentil = Whentil.When(
+                        () => document.querySelector<HTMLElement>(".Root__main-view #SpicyLyricsPage"),
+                        () => {
+                          Fullscreen.Open(true);
+                          pageWhentil?.Cancel();
+                        }
+                      );
+                    }
+                  } else {
+                    Session.GoBack();
                   }
-                );
-              }
-              //}
-            } else {
-              /* const isNewFullscreen = document.querySelector<HTMLElement>(".QdB2YtfEq0ks5O4QbtwX .WRGTOibB8qNEkgPNtMxq");
-                if (isNewFullscreen) {
-                  PageView.Destroy();
-                  self.active = false;
-                } else { */
-              Session.GoBack();
-              //}
-            }
-          },
-          false,
-          false
-        ),
-      },
-      {
-        Registered: false,
-        Button: new SpotifyPlayer.Playbar.Button(
-          "Enter Fullscreen",
-          Icons.Fullscreen,
-          async (self) => {
-            if (isSpicySidebarMode) {
-              CloseSidebarLyrics();
-            }
-            Whentil.When(
-              () => !isSpicySidebarMode,
-              async () => {
-                if (!self.active) {
-                  Session.Navigate({ pathname: "/SpicyLyrics" });
-                  const pageWhentil = Whentil.When(
-                    () => document.querySelector<HTMLElement>(".Root__main-view #SpicyLyricsPage"),
-                    () => {
-                      Fullscreen.Open(Global.Saves.shift_key_pressed ?? false);
-                      pageWhentil?.Cancel();
+                },
+                false,
+                false
+              ),
+            },
+            {
+              Registered: false,
+              Button: new SpotifyPlayer.Playbar.Button(
+                "Enter Fullscreen",
+                Icons.Fullscreen,
+                async (self) => {
+                  if (isSpicySidebarMode) {
+                    CloseSidebarLyrics();
+                  }
+                  Whentil.When(
+                    () => !isSpicySidebarMode,
+                    async () => {
+                      if (!self.active) {
+                        Session.Navigate({ pathname: "/SpicyLyrics" });
+                        const pageWhentil = Whentil.When(
+                          () => document.querySelector<HTMLElement>(".Root__main-view #SpicyLyricsPage"),
+                          () => {
+                            Fullscreen.Open(Global.Saves.shift_key_pressed ?? false);
+                            pageWhentil?.Cancel();
+                          }
+                        );
+                      } else {
+                        Session.GoBack();
+                      }
                     }
                   );
-                } else {
-                  Session.GoBack();
-                }
-              }
-            );
-          },
-          false,
-          false
-        ),
-      },
+                },
+                false,
+                false
+              ),
+            },
+          ]
+        : []),
       {
         Registered: false,
         Button: (
-          (('documentPictureInPicture' in window) && (Defaults.PopupLyricsAllowed))
+          (!isDockBridgeBuild && ('documentPictureInPicture' in window) && Defaults.PopupLyricsAllowed)
             ? new SpotifyPlayer.Playbar.Button(
               "Spicy Popup Lyrics",
               Icons.PiPMode,
@@ -477,12 +473,14 @@ async function main() {
     ];
   }
 
-  RegisterSidebarLyrics();
+  if (!isDockBridgeBuild) {
+    RegisterSidebarLyrics();
+  }
 
   // console.log("[Spicy Lyrics Debug] Setting up initial sidebar status check");
   //Whentil.When(() => document.querySelector<HTMLElement>(".Root__right-sidebar .XOawmCGZcQx4cesyNfVO:not(:has(.h0XG5HZ9x0lYV7JNwhoA.JHlPg4iOkqbXmXjXwVdo)):has(.jD_TVjbjclUwewP7P9e8)") && getQueuePlaybarButton(), () => {
 
-  if (!isSpicySidebarMode && getQueueContainer()) {
+  if (!isDockBridgeBuild && !isSpicySidebarMode && getQueueContainer()) {
     // console.log("[Spicy Lyrics Debug] Got now playing view parent container");
     const sidebarStatus = storage.get("sidebar-status") ?? "";
     // console.log("[Spicy Lyrics Debug] Sidebar status from storage:", sidebarStatus);
@@ -544,14 +542,15 @@ async function main() {
     }
   });
 
-  {
-    if (!ButtonList) return;
+  if (ButtonList && !isDockBridgeBuild) {
 
-    const fullscreenButton = ButtonList[1].Button;
-    fullscreenButton.element.style.order = "100001";
-    fullscreenButton.element.id = "SpicyLyrics_FullscreenButton";
+    const fullscreenButton = ButtonList[1]?.Button;
+    if (fullscreenButton) {
+      fullscreenButton.element.style.order = "100001";
+      fullscreenButton.element.id = "SpicyLyrics_FullscreenButton";
+    }
 
-    const popupLyricsButton = ButtonList[2].Button;
+    const popupLyricsButton = ButtonList[ButtonList.length - 1]?.Button;
     if (popupLyricsButton) {
       popupLyricsButton.element.style.order = "100000";
       popupLyricsButton.element.id = "SpicyLyrics_PopupLyricsButton";
@@ -641,7 +640,9 @@ async function main() {
 
   let button: any;
   if (ButtonList) {
-    button = ButtonList[0];
+    button = !isDockBridgeBuild ? ButtonList[0] : { Registered: false, Button: undefined };
+  } else {
+    button = { Registered: false, Button: undefined };
   }
 
   const Hometinue = async () => {
@@ -847,7 +848,7 @@ async function main() {
         PageContainer?.classList.remove("episode-content-type");
       }
 
-      if (!button.Registered) {
+      if (button?.Button && !button.Registered) {
         button.Button.register();
         button.Registered = true;
       }
@@ -931,42 +932,44 @@ async function main() {
       [key: string]: any;
     }
 
-    let lastLocation: Location | null = null;
+    if (!isDockBridgeBuild) {
+      let lastLocation: Location | null = null;
 
-    async function loadPage(location: Location) {
-      if (location.pathname === "/SpicyLyrics") {
-        if (isSpicySidebarMode) {
-          CloseSidebarLyrics();
-        }
-        Whentil.When(
-          () => !isSpicySidebarMode,
-          () => {
-            PageView.Open();
-            if (!button) return;
-            button.Button.active = true;
+      async function loadPage(location: Location) {
+        if (location.pathname === "/SpicyLyrics") {
+          if (isSpicySidebarMode) {
+            CloseSidebarLyrics();
           }
-        );
-      } else {
-        if (lastLocation?.pathname === "/SpicyLyrics") {
-          PageView.Destroy();
-          if (!button) return;
-          button.Button.active = false;
+          Whentil.When(
+            () => !isSpicySidebarMode,
+            () => {
+              PageView.Open();
+              if (!button) return;
+              button.Button.active = true;
+            }
+          );
+        } else {
+          if (lastLocation?.pathname === "/SpicyLyrics") {
+            PageView.Destroy();
+            if (!button) return;
+            button.Button.active = false;
+          }
         }
+        lastLocation = location;
       }
-      lastLocation = location;
+
+      Global.Event.listen("platform:history", loadPage);
+
+      if (Spicetify.Platform.History.location.pathname === "/SpicyLyrics") {
+        Global.Event.listen("pagecontainer:available", () => {
+          loadPage(Spicetify.Platform.History.location);
+          if (!button) return;
+          button.Button.active = true;
+        });
+      }
     }
 
-    Global.Event.listen("platform:history", loadPage);
-
-    if (Spicetify.Platform.History.location.pathname === "/SpicyLyrics") {
-      Global.Event.listen("pagecontainer:available", () => {
-        loadPage(Spicetify.Platform.History.location);
-        if (!button) return;
-        button.Button.active = true;
-      });
-    }
-
-    if (button) {
+    if (button?.Button) {
       button.Button.tippy.setContent("Spicy Lyrics");
     }
 
@@ -1156,7 +1159,7 @@ async function main() {
       Global.Event.listen("session:navigation", (data: Location) => {
         if (data.pathname === "/SpicyLyrics/Update") {
           storage.set("fromVersion", Defaults.SpicyLyricsVersion);
-          window._spicy_lyrics_metadata = {};
+          window[metadataKey] = {};
           Session.GoBack();
           window.location.reload();
         }
@@ -1176,11 +1179,11 @@ async function main() {
       const IsSomethingElseThanTrack = SpotifyPlayer.GetContentType() !== "track";
 
       if (IsSomethingElseThanTrack) {
-        if (!button) return;
+        if (!button?.Button) return;
         button.Button.deregister();
         button.Registered = false;
       } else {
-        if (!button) return;
+        if (!button?.Button) return;
         if (!button.Registered) {
           button.Button.register();
           button.Registered = true;
