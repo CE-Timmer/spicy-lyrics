@@ -1,8 +1,14 @@
 # DockBridge
 
-`DockBridge` is a Spicetify extension built to feed rich playback and lyric data into `SpotifyDock`.
+`DockBridge` is a standalone Spicetify extension package built to feed rich playback and lyric data into `SpotifyDock`.
 
 It keeps the Spicy Lyrics core pipeline available for lyric state, timing, and metadata capture, but removes the user-openable UI lifecycle so it can run quietly beside the original Spicy Lyrics extension.
+
+Important:
+
+- standalone package: yes
+- standalone replacement for original Spicy Lyrics UI: no
+- intended runtime pairing: original `spicy-lyrics` + `dockbridge.js`
 
 ## What It Does
 
@@ -93,11 +99,11 @@ spicetify apply
 In `SpotifyDock`:
 
 1. Open Settings
-2. Set `Lyrics Source` to `Spicy Lyrics`
+2. Set `Lyrics Source` to `DockBridge`
 3. Keep original Spicy Lyrics enabled
 4. Keep `dockbridge.js` enabled
 
-DockBridge will then provide the payloads SpotifyDock needs without requiring the full Spicy UI to be opened from DockBridge itself.
+DockBridge will then provide the payloads SpotifyDock needs.
 
 ## Development
 
@@ -132,8 +138,7 @@ DockBridge now uses its own:
 - sidebar body class
 - modal custom element tag
 
-It also disables its own page/fullscreen/popup/sidebar UI lifecycle in DockBridge mode, so the original Spicy Lyrics buttons and pages can remain the user-facing version.
-
+It also disables its own page/fullscreen/popup/sidebar UI lifecycle, so the original Spicy Lyrics buttons and pages stay how they are.
 ## Attribution
 
 This project is built on top of the original Spicy Lyrics codebase by **Spikerko**.

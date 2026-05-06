@@ -142,3 +142,6 @@ out
 
 # upcoming feature leak..?
 src/components/cli-sync
+
+# Build output
+dist/
