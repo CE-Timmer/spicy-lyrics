@@ -35,6 +35,32 @@ Original project:
 
 ### 2. Install DockBridge
 
+#### Option A: Download from Releases
+
+1. Open the repository Releases page
+2. Download the latest `dockbridge.js` release asset
+3. Copy it into your Spicetify extensions folder:
+
+```powershell
+Copy-Item .\dockbridge.js "$env:APPDATA\spicetify\Extensions\dockbridge.js" -Force
+```
+
+4. Add it to your Spicetify extensions list:
+
+```powershell
+spicetify config extensions "dockbridge.js"
+```
+
+If you are already using other extensions, append `dockbridge.js` to your existing list instead of replacing everything.
+
+5. Apply and restart Spotify:
+
+```powershell
+spicetify apply
+```
+
+#### Option B: Build from source
+
 1. Build this repo:
 
 ```powershell
@@ -127,4 +153,3 @@ This repository keeps the same license as the original Spicy Lyrics project.
 See:
 
 - [LICENSE](./LICENSE)
-
