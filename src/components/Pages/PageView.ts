@@ -50,6 +50,13 @@ import {
 import TransferElement from "../Utils/TransferElement.ts";
 import { IsPIP, _IsPIP_after, ClosePopupLyrics } from "../Utils/PopupLyrics.ts";
 import { CleanUpIsByCommunity } from "../../utils/Lyrics/Applyer/Credits/ApplyIsByCommunity.tsx";
+import {
+  APP_EXECUTE_SCOPE,
+  APP_PAGE_ID,
+  APP_PAGE_SELECTOR,
+  APP_ROUTE_BASE,
+  IS_DOCKBRIDGE_BUILD,
+} from "../../utils/runtimeNamespace.ts";
 
 interface TippyInstance {
   destroy: () => void;
@@ -117,7 +124,7 @@ async function OpenPage(
         PageView.IsTippyCapable = false;
     } */
   const elem = document.createElement("div");
-  elem.id = "SpicyLyricsPage";
+  elem.id = APP_PAGE_ID;
 
   if (Defaults.LyricsRenderer === "Spicy") {
     elem.classList.add("SpicyRenderer");
@@ -261,7 +268,7 @@ async function OpenPage(
 
   Session_OpenNowBar();
 
-  /* const ArtworkButton = document.querySelector<HTMLElement>("#SpicyLyricsPage .ContentBox .NowBar .Header .Artwork");
+  /* const ArtworkButton = document.querySelector<HTMLElement>("#DockBridgePage .ContentBox .NowBar .Header .Artwork");
 
     ArtworkButton.addEventListener("click", () => {
         NowBar_SwapSides();
@@ -375,22 +382,24 @@ function DestroyPage() {
 
 export let LyricsApplied = false;
 
-Global.Event.listen("lyrics:not-apply", () => {
-  CleanupScrollEvents();
-  LyricsApplied = false;
-  CleanUpIsByCommunity();
-});
+if (!IS_DOCKBRIDGE_BUILD) {
+  Global.Event.listen("lyrics:not-apply", () => {
+    CleanupScrollEvents();
+    LyricsApplied = false;
+    CleanUpIsByCommunity();
+  });
 
-Global.Event.listen("lyrics:apply", ({ Type }: { Type: string }) => {
-  CleanupScrollEvents();
+  Global.Event.listen("lyrics:apply", ({ Type }: { Type: string }) => {
+    CleanupScrollEvents();
 
-  if (!Type || Type === "Static") return;
-  if (ScrollSimplebar) {
-    InitializeScrollEvents(ScrollSimplebar);
-    //QueueForceScroll(); // Queue a force scroll instead of directly calling with true
-    LyricsApplied = true;
-  }
-});
+    if (!Type || Type === "Static") return;
+    if (ScrollSimplebar) {
+      InitializeScrollEvents(ScrollSimplebar);
+      //QueueForceScroll(); // Queue a force scroll instead of directly calling with true
+      LyricsApplied = true;
+    }
+  });
+}
 
 function AppendViewControls(ReAppend: boolean = false) {
   if (!PageContainer) return;
@@ -648,7 +657,7 @@ function AppendViewControls(ReAppend: boolean = false) {
                 Whentil.When(
                   () => !isSpicySidebarMode,
                   () => {
-                    Session.Navigate({ pathname: "/SpicyLyrics" });
+                    Session.Navigate({ pathname: APP_ROUTE_BASE });
                   }
                 );
               }, 495);
@@ -715,7 +724,7 @@ function AppendViewControls(ReAppend: boolean = false) {
             Whentil.When(
               () => !isSpicySidebarMode,
               () => {
-                Session.Navigate({ pathname: "/SpicyLyrics" });
+                Session.Navigate({ pathname: APP_ROUTE_BASE });
                 Whentil.When(
                   () => !!PageContainer,
                   () => {
@@ -776,13 +785,13 @@ function AppendViewControls(ReAppend: boolean = false) {
                                 <div class="Setting">
                                     <div class="SettingName"><span>Load TTML (for the current song)</span></div>
                                     <div class="SettingValue">
-                                        <button onclick="window._spicy_lyrics.execute('upload-ttml')">Load TTML</button>
+                                        <button onclick="window.${APP_EXECUTE_SCOPE}.execute('upload-ttml')">Load TTML</button>
                                     </div>
                                 </div>
                                 <div class="Setting">
                                     <div class="SettingName"><span>Reset TTML (for the current song)</span></div>
                                     <div class="SettingValue">
-                                        <button onclick="window._spicy_lyrics.execute('reset-ttml')">Reset TTML</button>
+                                        <button onclick="window.${APP_EXECUTE_SCOPE}.execute('reset-ttml')">Reset TTML</button>
                                     </div>
                                 </div>
                             </div>
@@ -910,7 +919,7 @@ export function SpicyLyrics_Notification({
 
 /* function SocketStatusChange(status: boolean) {
     if (!PageView.IsOpened) return;
-    if (!document.querySelector("#SpicyLyricsPage")) return;
+    if (!document.querySelector(APP_PAGE_SELECTOR)) return;
     const notif = SpicyLyrics_Notification({
         icon: Icons.LyricsPage,
         metadata: {

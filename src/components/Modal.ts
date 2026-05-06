@@ -1,3 +1,5 @@
+import { APP_MODAL_TAG } from "../utils/runtimeNamespace.ts";
+
 type ModalDisplayOptions = {
 	title: string;
 	content: any;
@@ -94,5 +96,9 @@ class _HTMLGenericModal extends HTMLElement {
         }, 50);
 	}
 }
-customElements.define("sl-generic-modal", _HTMLGenericModal);
-export const PopupModal = new _HTMLGenericModal();
+
+if (!customElements.get(APP_MODAL_TAG)) {
+	customElements.define(APP_MODAL_TAG, _HTMLGenericModal);
+}
+
+export const PopupModal = document.createElement(APP_MODAL_TAG) as _HTMLGenericModal;

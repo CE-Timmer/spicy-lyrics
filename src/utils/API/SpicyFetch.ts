@@ -4,10 +4,11 @@ import Platform from "../../components/Global/Platform";
 import Session from "../../components/Global/Session";
 import { CheckForUpdates } from "../version/CheckForUpdates";
 import { GetExpireStore } from "@spikerko/tools/Cache";
+import { APP_CACHE_PREFIX } from "../runtimeNamespace.ts";
 
 
 export const SpicyFetchStore = GetExpireStore<any>(
-    "SpicyLyrics_FetchStore",
+    `${APP_CACHE_PREFIX}_FetchStore`,
     1,
     {
         Unit: "Days",

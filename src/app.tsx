@@ -1,15 +1,7 @@
-// CSS Imports
-import "./css/default.css";
-import "./css/default.scss";
-import "./css/Simplebar.css";
-import "./css/ContentBox.css";
-// import "./css/SongMoreInfo.css";
-import "./css/DynamicBG/spicy-dynamic-bg.css";
-import "./css/Lyrics/main.css";
-import "./css/Lyrics/Mixed.css";
-import "./css/Loaders/LoaderContainer.css";
-import "./css/font-pack/font-pack.css";
-import "./css/ttml-profile/profile.css";
+// DockBridge keeps the full Spicy core/runtime, but it should not ship the
+// original page/sidebar UI stylesheet stack when running beside the real
+// Spicy Lyrics extension. Those styles are broad enough to interfere with the
+// original buttons/sidebar layout even if DockBridge UI is never opened.
 
 import "./components/Utils/GlobalExecute.ts";
 
@@ -49,15 +41,23 @@ import { ScrollSimplebar } from "./utils/Scrolling/Simplebar/ScrollSimplebar.ts"
 import { setSettingsMenu } from "./utils/settings.ts";
 import storage from "./utils/storage.ts";
 import { CheckForUpdates } from "./utils/version/CheckForUpdates.tsx";
-import "./css/polyfills/tippy-polyfill.css";
-import "./css/polyfills/generic-modal-polyfill.css";
 import UpdateDialog from "./components/ReactComponents/UpdateDialog.tsx";
 import { IsPIP, OpenPopupLyrics, ClosePopupLyrics } from "./components/Utils/PopupLyrics.ts";
 import ReactDOM from "react-dom/client";
 import { PopupModal } from "./components/Modal.ts";
-import { ProjectName, ProjectVersion } from "../project/config.ts";
+import { ProjectVersion } from "../project/config.ts";
 import { runThemeMatcher } from "./utils/themeMatcher.ts";
 import { setupSpotifyDockBridge } from "./components/Utils/SpotifyDockBridge.ts";
+import {
+  APP_FULLSCREEN_BUTTON_ID,
+  APP_METADATA_SCOPE,
+  APP_PAGE_SELECTOR,
+  APP_POPUP_BUTTON_ID,
+  APP_ROUTE_BASE,
+  APP_STYLE_ID,
+  APP_UPDATE_ROUTE,
+  IS_DOCKBRIDGE_BUILD,
+} from "./utils/runtimeNamespace.ts";
 
 /* 
   upcoming feature leak..?
@@ -68,8 +68,9 @@ import { setupSpotifyDockBridge } from "./components/Utils/SpotifyDockBridge.ts"
 
 async function main() {
   await Platform.OnSpotifyReady;
-  const isDockBridgeBuild = ProjectName === "dockbridge";
-  const metadataKey = isDockBridgeBuild ? "_dockbridge_metadata" : "_spicy_lyrics_metadata";
+  const isDockBridgeBuild = IS_DOCKBRIDGE_BUILD;
+  const enableUiLifecycle = !isDockBridgeBuild;
+  const metadataKey = APP_METADATA_SCOPE;
 
   Global.SetScope("fullscreen.open", false);
 
@@ -221,12 +222,14 @@ async function main() {
     }
   } */
 
-  if (Defaults.SettingsOnTop) {
+  if (enableUiLifecycle && Defaults.SettingsOnTop) {
     document.body.classList.add("sl_settings_top");
   }
 
-  // Lets set out the Settings Menu
-  setSettingsMenu();
+  if (enableUiLifecycle) {
+    // Lets set out the Settings Menu
+    setSettingsMenu();
+  }
 
   const OldStyleFont = storage.get("old-style-font");
   if (OldStyleFont !== "true") {
@@ -380,15 +383,13 @@ async function main() {
         }
   `;
 
-  skeletonStyle.id = isDockBridgeBuild
-    ? "dockbridge-additionalStyling"
-    : "spicyLyrics-additionalStyling";
+  skeletonStyle.id = APP_STYLE_ID;
   document.head.appendChild(skeletonStyle);
 
   App.SetReady();
 
   let ButtonList: any;
-  if (!isDockBridgeBuild && SpotifyPlayer.Playbar?.Button) {
+  if (enableUiLifecycle && SpotifyPlayer.Playbar?.Button) {
     ButtonList = [
       ...(!isDockBridgeBuild
         ? [
@@ -399,10 +400,10 @@ async function main() {
                 Icons.LyricsPage,
                 (self) => {
                   if (!self.active) {
-                    Session.Navigate({ pathname: "/SpicyLyrics" });
+                    Session.Navigate({ pathname: APP_ROUTE_BASE });
                     if (Global.Saves.shift_key_pressed) {
                       const pageWhentil = Whentil.When(
-                        () => document.querySelector<HTMLElement>(".Root__main-view #SpicyLyricsPage"),
+                        () => document.querySelector<HTMLElement>(`.Root__main-view ${APP_PAGE_SELECTOR}`),
                         () => {
                           Fullscreen.Open(true);
                           pageWhentil?.Cancel();
@@ -430,9 +431,9 @@ async function main() {
                     () => !isSpicySidebarMode,
                     async () => {
                       if (!self.active) {
-                        Session.Navigate({ pathname: "/SpicyLyrics" });
+                        Session.Navigate({ pathname: APP_ROUTE_BASE });
                         const pageWhentil = Whentil.When(
-                          () => document.querySelector<HTMLElement>(".Root__main-view #SpicyLyricsPage"),
+                          () => document.querySelector<HTMLElement>(`.Root__main-view ${APP_PAGE_SELECTOR}`),
                           () => {
                             Fullscreen.Open(Global.Saves.shift_key_pressed ?? false);
                             pageWhentil?.Cancel();
@@ -473,26 +474,26 @@ async function main() {
     ];
   }
 
-  if (!isDockBridgeBuild) {
+  if (enableUiLifecycle) {
     RegisterSidebarLyrics();
   }
 
   // console.log("[Spicy Lyrics Debug] Setting up initial sidebar status check");
   //Whentil.When(() => document.querySelector<HTMLElement>(".Root__right-sidebar .XOawmCGZcQx4cesyNfVO:not(:has(.h0XG5HZ9x0lYV7JNwhoA.JHlPg4iOkqbXmXjXwVdo)):has(.jD_TVjbjclUwewP7P9e8)") && getQueuePlaybarButton(), () => {
 
-  if (!isDockBridgeBuild && !isSpicySidebarMode && getQueueContainer()) {
+  if (enableUiLifecycle && !isSpicySidebarMode && getQueueContainer()) {
     // console.log("[Spicy Lyrics Debug] Got now playing view parent container");
     const sidebarStatus = storage.get("sidebar-status") ?? "";
     // console.log("[Spicy Lyrics Debug] Sidebar status from storage:", sidebarStatus);
     if (sidebarStatus === "open") {
       // console.log("[Spicy Lyrics Debug] Sidebar status is 'open', checking current path");
-      if (Spicetify.Platform.History.location.pathname === "/SpicyLyrics") {
+      if (Spicetify.Platform.History.location.pathname === APP_ROUTE_BASE) {
         // console.log("[Spicy Lyrics Debug] Currently on /SpicyLyrics, going back");
         Session.GoBack();
         // console.log("[Spicy Lyrics Debug] Setting up Whentil to open sidebar after navigation");
         Whentil.When(
           () =>
-            !PageView.IsOpened && Spicetify.Platform.History.location.pathname !== "/SpicyLyrics",
+            !PageView.IsOpened && Spicetify.Platform.History.location.pathname !== APP_ROUTE_BASE,
           () => {
             // console.log("[Spicy Lyrics Debug] Page closed and navigated away, opening sidebar");
             OpenSidebarLyrics(!!getQueueContainer());
@@ -502,7 +503,7 @@ async function main() {
         // console.log("[Spicy Lyrics Debug] Not on /SpicyLyrics, setting up Whentil to open sidebar");
         Whentil.When(
           () =>
-            !PageView.IsOpened && Spicetify.Platform.History.location.pathname !== "/SpicyLyrics",
+            !PageView.IsOpened && Spicetify.Platform.History.location.pathname !== APP_ROUTE_BASE,
           () => {
             // console.log("[Spicy Lyrics Debug] Conditions met, opening sidebar");
             OpenSidebarLyrics(!!getQueueContainer());
@@ -532,28 +533,30 @@ async function main() {
     Global.Saves.shift_key_pressed = false;
   });
 
-  Global.Event.listen("pagecontainer:available", () => {
-    if (!ButtonList) return;
-    for (const button of ButtonList) {
-      if (!button.Registered) {
-        if (button.Button) button.Button.register();
-        button.Registered = true;
+  if (enableUiLifecycle) {
+    Global.Event.listen("pagecontainer:available", () => {
+      if (!ButtonList) return;
+      for (const button of ButtonList) {
+        if (!button.Registered) {
+          if (button.Button) button.Button.register();
+          button.Registered = true;
+        }
       }
-    }
-  });
+    });
+  }
 
-  if (ButtonList && !isDockBridgeBuild) {
+  if (ButtonList && enableUiLifecycle) {
 
     const fullscreenButton = ButtonList[1]?.Button;
     if (fullscreenButton) {
       fullscreenButton.element.style.order = "100001";
-      fullscreenButton.element.id = "SpicyLyrics_FullscreenButton";
+      fullscreenButton.element.id = APP_FULLSCREEN_BUTTON_ID;
     }
 
     const popupLyricsButton = ButtonList[ButtonList.length - 1]?.Button;
     if (popupLyricsButton) {
       popupLyricsButton.element.style.order = "100000";
-      popupLyricsButton.element.id = "SpicyLyrics_PopupLyricsButton";
+      popupLyricsButton.element.id = APP_POPUP_BUTTON_ID;
     }
 
     const hideUnwantedButtons = (container: Element) => {
@@ -569,8 +572,8 @@ async function main() {
 
         if (
           (isFullscreen || isPip || isGenericControl) &&
-          element.id !== "SpicyLyrics_FullscreenButton" &&
-          element.id !== "SpicyLyrics_PopupLyricsButton"
+          element.id !== APP_FULLSCREEN_BUTTON_ID &&
+          element.id !== APP_POPUP_BUTTON_ID
         ) {
           (element as HTMLElement).style.display = "none";
         }
@@ -653,22 +656,24 @@ async function main() {
       }
     );
 
-    const fromVersion = storage.get("fromVersion") as string;
-    if (fromVersion !== Defaults.SpicyLyricsVersion) {
-      const div = document.createElement("div");
-      const reactRoot = ReactDOM.createRoot(div);
-      reactRoot.render(
-        <UpdateDialog fromVersion={fromVersion} spicyLyricsVersion={Defaults.SpicyLyricsVersion} />
-      );
+    if (enableUiLifecycle) {
+      const fromVersion = storage.get("fromVersion") as string;
+      if (fromVersion !== Defaults.SpicyLyricsVersion) {
+        const div = document.createElement("div");
+        const reactRoot = ReactDOM.createRoot(div);
+        reactRoot.render(
+          <UpdateDialog fromVersion={fromVersion} spicyLyricsVersion={Defaults.SpicyLyricsVersion} />
+        );
 
-      PopupModal.display({
-        title: "Spicy Lyrics Updated!",
-        content: div,
-        isLarge: true,
-        onClose: () => {
-          reactRoot.unmount();
-        }
-      });
+        PopupModal.display({
+          title: "Spicy Lyrics Updated!",
+          content: div,
+          isLarge: true,
+          onClose: () => {
+            reactRoot.unmount();
+          }
+        });
+      }
     }
 
     storage.set("fromVersion", Defaults.SpicyLyricsVersion);
@@ -828,16 +833,18 @@ async function main() {
       }
     }
 
-    startNowPlayingBarObserver();
-    scheduleNowPlayingBarDynamicBackgroundApply();
+    if (enableUiLifecycle) {
+      startNowPlayingBarObserver();
+      scheduleNowPlayingBarDynamicBackgroundApply();
 
-    Global.Event.listen("fullscreen:open", () => {
-      CleanupNowBarDynamicBgLets()
-    });
+      Global.Event.listen("fullscreen:open", () => {
+        CleanupNowBarDynamicBgLets()
+      });
 
-    Global.Event.listen("fullscreen:exit", () => {
-      scheduleNowPlayingBarDynamicBackgroundApply()
-    });
+      Global.Event.listen("fullscreen:exit", () => {
+        scheduleNowPlayingBarDynamicBackgroundApply()
+      });
+    }
 
     async function onSongChange(event: any) {
       const contentType = SpotifyPlayer.GetContentType();
@@ -853,7 +860,7 @@ async function main() {
         button.Registered = true;
       }
 
-      if (PageContainer?.querySelector(".ContentBox .NowBar")) {
+      if (enableUiLifecycle && PageContainer?.querySelector(".ContentBox .NowBar")) {
         Fullscreen.IsOpen ? UpdateNowBar(true) : UpdateNowBar();
       }
 
@@ -863,6 +870,7 @@ async function main() {
       }
 
       if (
+        enableUiLifecycle &&
         Defaults.StaticBackground &&
         !SpotifyPlayer.IsDJ() &&
         (Defaults.StaticBackgroundType === "Auto" ||
@@ -878,18 +886,20 @@ async function main() {
         }
       }
 
-      try {
-        void scheduleNowPlayingBarDynamicBackgroundApply();
-      } catch (err) {
-        console.error("Error applying dynamic BG to NowPlayingBar:", err);
-      }
+      if (enableUiLifecycle) {
+        try {
+          void scheduleNowPlayingBarDynamicBackgroundApply();
+        } catch (err) {
+          console.error("Error applying dynamic BG to NowPlayingBar:", err);
+        }
 
-      const contentBox = PageContainer?.querySelector<HTMLElement>(".ContentBox");
-      if (!contentBox || (Defaults.StaticBackground && Defaults.StaticBackgroundType === "Color")) return;
-      try {
-        void ApplyDynamicBackground(contentBox, "lpagebg");
-      } catch (err) {
-        console.error("Error applying dynamic background:", err);
+        const contentBox = PageContainer?.querySelector<HTMLElement>(".ContentBox");
+        if (!contentBox || (Defaults.StaticBackground && Defaults.StaticBackgroundType === "Color")) return;
+        try {
+          void ApplyDynamicBackground(contentBox, "lpagebg");
+        } catch (err) {
+          console.error("Error applying dynamic background:", err);
+        }
       }
     }
     Global.Event.listen("playback:songchange", onSongChange);
@@ -900,6 +910,7 @@ async function main() {
     }
 
     if (
+      enableUiLifecycle &&
       Defaults.StaticBackground &&
       !SpotifyPlayer.IsDJ() &&
       (Defaults.StaticBackgroundType === "Auto" ||
@@ -932,11 +943,11 @@ async function main() {
       [key: string]: any;
     }
 
-    if (!isDockBridgeBuild) {
+    if (enableUiLifecycle) {
       let lastLocation: Location | null = null;
 
       async function loadPage(location: Location) {
-        if (location.pathname === "/SpicyLyrics") {
+        if (location.pathname === APP_ROUTE_BASE) {
           if (isSpicySidebarMode) {
             CloseSidebarLyrics();
           }
@@ -949,7 +960,7 @@ async function main() {
             }
           );
         } else {
-          if (lastLocation?.pathname === "/SpicyLyrics") {
+          if (lastLocation?.pathname === APP_ROUTE_BASE) {
             PageView.Destroy();
             if (!button) return;
             button.Button.active = false;
@@ -960,7 +971,7 @@ async function main() {
 
       Global.Event.listen("platform:history", loadPage);
 
-      if (Spicetify.Platform.History.location.pathname === "/SpicyLyrics") {
+      if (Spicetify.Platform.History.location.pathname === APP_ROUTE_BASE) {
         Global.Event.listen("pagecontainer:available", () => {
           loadPage(Spicetify.Platform.History.location);
           if (!button) return;
@@ -969,7 +980,7 @@ async function main() {
       }
     }
 
-    if (button?.Button) {
+    if (enableUiLifecycle && button?.Button) {
       button.Button.tippy.setContent("Spicy Lyrics");
     }
 
@@ -1156,46 +1167,52 @@ async function main() {
       Spicetify.Platform.History.listen(Session.RecordNavigation);
       Session.RecordNavigation(Spicetify.Platform.History.location);
 
-      Global.Event.listen("session:navigation", (data: Location) => {
-        if (data.pathname === "/SpicyLyrics/Update") {
-          storage.set("fromVersion", Defaults.SpicyLyricsVersion);
-          window[metadataKey] = {};
-          Session.GoBack();
-          window.location.reload();
-        }
-      });
+      if (enableUiLifecycle) {
+        Global.Event.listen("session:navigation", (data: Location) => {
+          if (data.pathname === APP_UPDATE_ROUTE) {
+            storage.set("fromVersion", Defaults.SpicyLyricsVersion);
+            window[metadataKey] = {};
+            Session.GoBack();
+            window.location.reload();
+          }
+        });
 
-      const CheckForUpdates_Intervaled = async () => {
-        await CheckForUpdates();
-        setTimeout(CheckForUpdates_Intervaled, 300 * 1000);
-      };
-      setTimeout(async () => await CheckForUpdates_Intervaled(), 1000);
+        const CheckForUpdates_Intervaled = async () => {
+          await CheckForUpdates();
+          setTimeout(CheckForUpdates_Intervaled, 300 * 1000);
+        };
+        setTimeout(async () => await CheckForUpdates_Intervaled(), 1000);
+      }
     }
   };
 
-  Whentil.When(
-    () => SpotifyPlayer.GetContentType(),
-    () => {
-      const IsSomethingElseThanTrack = SpotifyPlayer.GetContentType() !== "track";
+  if (enableUiLifecycle) {
+    Whentil.When(
+      () => SpotifyPlayer.GetContentType(),
+      () => {
+        const IsSomethingElseThanTrack = SpotifyPlayer.GetContentType() !== "track";
 
-      if (IsSomethingElseThanTrack) {
-        if (!button?.Button) return;
-        button.Button.deregister();
-        button.Registered = false;
-      } else {
-        if (!button?.Button) return;
-        if (!button.Registered) {
-          button.Button.register();
-          button.Registered = true;
+        if (IsSomethingElseThanTrack) {
+          if (!button?.Button) return;
+          button.Button.deregister();
+          button.Registered = false;
+        } else {
+          if (!button?.Button) return;
+          if (!button.Registered) {
+            button.Button.register();
+            button.Registered = true;
+          }
         }
       }
-    }
-  );
+    );
+  }
 
   Hometinue();
   setupSpotifyDockBridge();
 
-  runThemeMatcher();
+  if (enableUiLifecycle) {
+    runThemeMatcher();
+  }
 
 
   /* if (storage.get("developerMode") === "true") {
@@ -1204,3 +1221,4 @@ async function main() {
 }
 
 main();
+

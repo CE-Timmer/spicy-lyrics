@@ -142,7 +142,7 @@ export const UpdateSongMoreInfo = async () => {
         return;
     }
 
-    const SongMoreInfo = document.querySelector<HTMLDivElement>("#SpicyLyricsPage .SongMoreInfo");
+    const SongMoreInfo = document.querySelector<HTMLDivElement>("#DockBridgePage .SongMoreInfo");
     if (!SongMoreInfo) {
         return;
     }

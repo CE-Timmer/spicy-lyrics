@@ -1,32 +1,22 @@
 [
   {
-    "name": "Spicy Lyrics",
-    "description": "Spicy Lyrics is a better lyrics experience (compared to Spotify Lyrics) for Spotify. It brings word-by-word lyrics (karaoke style), beautiful animations, and more. Come and give it a try!",
+    "name": "DockBridge",
+    "description": "DockBridge is a companion Spicetify extension for SpotifyDock. It keeps the Spicy Lyrics core available for lyric timing and metadata capture, but avoids exposing its own user-openable UI lifecycle.",
     "preview": "./previews/square-s.gif",
-    "main": "./builds/spicy-lyrics.mjs",
+    "main": "./dist/dockbridge.js",
     "readme": "README.md",
     "branch": "main",
     "authors": [{ "name": "Spikerko", "url": "https://github.com/Spikerko" }],
     "tags": [
+      "dockbridge",
+      "spotifydock",
       "lyrics",
-      "spicy-lyrics",
-      "word-to-word-lyrics",
-      "karaoke",
       "spicetify",
-      "syllable-lyrics",
-      "syllable",
-      "smooth",
-      "beautiful",
-      "spicy",
-      "animated",
-      "background",
-      "backgrounds",
-      "dynamic",
-      "pretty",
-      "romanization",
-      "romaji",
-      "pinyin",
-      "customizable"
+      "bridge",
+      "karaoke",
+      "word-to-word-lyrics",
+      "sync",
+      "metadata"
     ]
   }
 ]

@@ -13,6 +13,7 @@ import { Icons } from "../Styling/Icons.ts";
 import Fullscreen, { CleanupMediaBox } from "./Fullscreen.ts";
 import { isSpicySidebarMode } from "./SidebarLyrics.ts";
 import { IsPIP } from "./PopupLyrics.ts";
+import { APP_PAGE_SELECTOR } from "../../utils/runtimeNamespace.ts";
 
 // Define interfaces for our control instances
 interface PlaybackControlsInstance {
@@ -725,15 +726,15 @@ function OpenNowBar(skipSaving: boolean = false) {
 
   /* const DragBox = Fullscreen.IsOpen
         ? document.querySelector(
-              "#SpicyLyricsPage .ContentBox .NowBar .Header .MediaBox .MediaContent"
+              `${APP_PAGE_SELECTOR} .ContentBox .NowBar .Header .MediaBox .MediaContent`
           )
         : document.querySelector(
-              "#SpicyLyricsPage .ContentBox .NowBar .Header .MediaBox .MediaImageContainer"
+              `${APP_PAGE_SELECTOR} .ContentBox .NowBar .Header .MediaBox .MediaImageContainer`
           ); */
 
   /* {
         const dropZones = document.querySelectorAll(
-            "#SpicyLyricsPage .ContentBox .DropZone"
+            `${APP_PAGE_SELECTOR} .ContentBox .DropZone`
         );
 
         DragBox.addEventListener("dragstart", (e) => {
@@ -741,7 +742,7 @@ function OpenNowBar(skipSaving: boolean = false) {
             if (missingLyrics) return;
 
             // Don't prevent default - allow the drag to start
-            document.querySelector("#SpicyLyricsPage").classList.add("SomethingDragging");
+            document.querySelector(APP_PAGE_SELECTOR)?.classList.add("SomethingDragging");
             if (NowBar.classList.contains("LeftSide")) {
                 dropZones.forEach((zone) => {
                     if (zone.classList.contains("LeftSide")) {
@@ -765,7 +766,7 @@ function OpenNowBar(skipSaving: boolean = false) {
         DragBox.addEventListener("dragend", () => {
             const missingLyrics = storage.get("currentLyricsData")?.toString() === `NO_LYRICS:${SpotifyPlayer.GetSongId()}`;
             if (missingLyrics) return;
-            document.querySelector("#SpicyLyricsPage").classList.remove("SomethingDragging");
+            document.querySelector(APP_PAGE_SELECTOR)?.classList.remove("SomethingDragging");
             dropZones.forEach((zone) => zone.classList.remove("Hidden"));
             DragBox.classList.remove("Dragging");
         });
@@ -801,9 +802,9 @@ function OpenNowBar(skipSaving: boolean = false) {
                 NowBar.classList.remove(currentClass);
                 NowBar.classList.add(newClass);
 
-                document.querySelector("#SpicyLyricsPage").classList.remove("NowBarSide__Left");
-                document.querySelector("#SpicyLyricsPage").classList.remove("NowBarSide__Right");
-                document.querySelector("#SpicyLyricsPage").classList.add(`NowBarSide__${newClass.replace("Side", "")}`);
+                document.querySelector(APP_PAGE_SELECTOR)?.classList.remove("NowBarSide__Left");
+                document.querySelector(APP_PAGE_SELECTOR)?.classList.remove("NowBarSide__Right");
+                document.querySelector(APP_PAGE_SELECTOR)?.classList.add(`NowBarSide__${newClass.replace("Side", "")}`);
 
                 const side = zone.classList.contains("RightSide") ? "right" : "left";
 
@@ -939,7 +940,7 @@ async function getAVCStreamUrl(manifestUrl: string) {
 } */
 
 /* function UpdateNowBar(force = false) {
-    const NowBar = document.querySelector("#SpicyLyricsPage .ContentBox .NowBar");
+    const NowBar = document.querySelector(`${APP_PAGE_SELECTOR} .ContentBox .NowBar`);
     if (!NowBar) return;
 
     //const ArtistsDiv = NowBar.querySelector(".Header .Metadata .Artists");
@@ -1255,7 +1256,7 @@ function Session_NowBar_SetSide() {
 
 function DeregisterNowBarBtn() {
   /* const nowBarButton = document.querySelector(
-        "#SpicyLyricsPage .ContentBox .ViewControls #NowBarToggle"
+        `${APP_PAGE_SELECTOR} .ContentBox .ViewControls #NowBarToggle`
     );
     nowBarButton?.remove(); */
   PageView.AppendViewControls(true);

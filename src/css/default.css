@@ -6,7 +6,7 @@
   display: none;
 }
 
-#SpicyLyricsPage {
+#DockBridgePage {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -24,25 +24,25 @@
   transition: left 0.5s cubic-bezier(0.91, 0.04, 0.94, 0.98);
 }
 
-body.SpicySidebarLyrics__Active #SpicyLyricsPage:not(.Fullscreen) {
+body.DockBridgeSidebarLyrics__Active #DockBridgePage:not(.Fullscreen) {
   border-radius: 8px;
 }
 
-#SpicyLyricsPage.UseSpicyFont,
-#SpicyLyricsPage.UseSpicyFont *,
+#DockBridgePage.UseSpicyFont,
+#DockBridgePage.UseSpicyFont *,
 .SpicyLyricsFontPixel,
 .SpicyLyricsFontPixel * {
   font-family: SpicyLyrics, "Noto Sans Georgian", "VazirmatnRegular", sans-serif !important;
 }
 
-.Root__main-view:has(#SpicyLyricsPage) .main-view-container__scroll-node-child,
-.Root__main-view:has(#SpicyLyricsPage) .main-view-container__scroll-node-child-spacer,
-.Root__main-view:has(#SpicyLyricsPage) .main-view-container__scroll-node-child,
-.Root__main-view:has(#SpicyLyricsPage) .main-view-container__scroll-node-child-spacer {
+.Root__main-view:has(#DockBridgePage) .main-view-container__scroll-node-child,
+.Root__main-view:has(#DockBridgePage) .main-view-container__scroll-node-child-spacer,
+.Root__main-view:has(#DockBridgePage) .main-view-container__scroll-node-child,
+.Root__main-view:has(#DockBridgePage) .main-view-container__scroll-node-child-spacer {
   display: none;
 }
 
-#SpicyLyricsPage .ViewControls {
+#DockBridgePage .ViewControls {
   container-type: size;
   display: flex;
   gap: 8px;
@@ -54,23 +54,23 @@ body.SpicySidebarLyrics__Active #SpicyLyricsPage:not(.Fullscreen) {
   --ViewControlSize: 100cqh;
 }
 
-#SpicyLyricsPage:not(.Fullscreen) .ViewControls {
+#DockBridgePage:not(.Fullscreen) .ViewControls {
   position: absolute;
   width: 100cqw;
   opacity: 0;
 }
 
-#SpicyLyricsPage.ViewControlsPosition_Bottom:not(.Fullscreen) .ViewControls {
+#DockBridgePage.ViewControlsPosition_Bottom:not(.Fullscreen) .ViewControls {
   bottom: 24px;
 }
 
-#SpicyLyricsPage.ViewControlsPosition_Top:not(.Fullscreen) .ViewControls {
+#DockBridgePage.ViewControlsPosition_Top:not(.Fullscreen) .ViewControls {
   top: 24px;
 }
 
 
 
-#SpicyLyricsPage:not(.Fullscreen) .ViewControls::before {
+#DockBridgePage:not(.Fullscreen) .ViewControls::before {
   z-index: -1;
   content: "";
   position: absolute;
@@ -78,46 +78,46 @@ body.SpicySidebarLyrics__Active #SpicyLyricsPage:not(.Fullscreen) {
   opacity: 0.6;
 }
 
-#SpicyLyricsPage.ViewControlsPosition_Bottom:not(.Fullscreen) .ViewControls::before {
+#DockBridgePage.ViewControlsPosition_Bottom:not(.Fullscreen) .ViewControls::before {
   bottom: -24px;
   background: linear-gradient(to top, var(--spice-main, #000000), transparent);
 }
 
-#SpicyLyricsPage.ViewControlsPosition_Top:not(.Fullscreen) .ViewControls::before {
+#DockBridgePage.ViewControlsPosition_Top:not(.Fullscreen) .ViewControls::before {
   top: -24px;
   background: linear-gradient(to bottom, var(--spice-main, #000000), transparent);
 }
 
 
 /* :root:has(.SpicyBG.BackgroundLayer)
-  body:not(.SpicySidebarLyrics__Active)
-  #SpicyLyricsPage:not(.Fullscreen)
+  body:not(.DockBridgeSidebarLyrics__Active)
+  #DockBridgePage:not(.Fullscreen)
   .ViewControls,
-:root:has(.lucid-bg-wrapper) #SpicyLyricsPage:not(.Fullscreen) .ViewControls {
+:root:has(.lucid-bg-wrapper) #DockBridgePage:not(.Fullscreen) .ViewControls {
   bottom: 115px !important;
 }
 
-body.player-floating:has(.glassify-bg) #SpicyLyricsPage:not(.Fullscreen) .ViewControls {
+body.player-floating:has(.glassify-bg) #DockBridgePage:not(.Fullscreen) .ViewControls {
   bottom: 96px !important;
 }
 
-:root:has(.lucid-bg) #SpicyLyricsPage:not(.Fullscreen) .ViewControls {
+:root:has(.lucid-bg) #DockBridgePage:not(.Fullscreen) .ViewControls {
   bottom: 80px !important;
 } */
 
-body.SpicySidebarLyrics__Active #SpicyLyricsPage:not(.Fullscreen) .ViewControls {
+body.DockBridgeSidebarLyrics__Active #DockBridgePage:not(.Fullscreen) .ViewControls {
   --ViewControlSize: 90cqh;
 }
 
-#SpicyLyricsPage:not(.Fullscreen):hover .ViewControls {
+#DockBridgePage:not(.Fullscreen):hover .ViewControls {
   opacity: 0.45;
 }
 
-#SpicyLyricsPage:not(.Fullscreen) .ViewControls:hover {
+#DockBridgePage:not(.Fullscreen) .ViewControls:hover {
   opacity: 1 !important;
 }
 
-#SpicyLyricsPage .ViewControls .ViewControl {
+#DockBridgePage .ViewControls .ViewControl {
   --ViewControlHeight: var(--ViewControlSize, 100cqh);
   aspect-ratio: 1;
   background: rgba(21, 22, 23, 0.72);
@@ -137,66 +137,66 @@ body.SpicySidebarLyrics__Active #SpicyLyricsPage:not(.Fullscreen) .ViewControls 
   transform-origin: center bottom;
 }
 
-#SpicyLyricsPage .ViewControls:has(.ViewControl:hover) > .ViewControl:not(:hover) {
+#DockBridgePage .ViewControls:has(.ViewControl:hover) > .ViewControl:not(:hover) {
   opacity: 0.75;
 }
 
-#SpicyLyricsPage .ViewControls .ViewControl svg:not(.NoFill) {
+#DockBridgePage .ViewControls .ViewControl svg:not(.NoFill) {
   fill: currentColor;
 }
 
-#SpicyLyricsPage .ViewControls .ViewControl svg.NoFill {
+#DockBridgePage .ViewControls .ViewControl svg.NoFill {
   fill: none !important;
 }
 
-/* #SpicyLyricsPage:not(.Fullscreen, .NowBarSide__Right) .ViewControls:hover {
+/* #DockBridgePage:not(.Fullscreen, .NowBarSide__Right) .ViewControls:hover {
   opacity: 1 !important;
   left: var(--ControlsHoverOffset) !important;
   scale: var(--ControlsHoverScale) !important;
 }
 
-#SpicyLyricsPage:not(.Fullscreen, .NowBarSide__Right):hover .ViewControls {
+#DockBridgePage:not(.Fullscreen, .NowBarSide__Right):hover .ViewControls {
   opacity: .6;
   left: var(--PageHoverOffset);
   scale: var(--PageHoverScale);
 }
 
-#SpicyLyricsPage:not(.Fullscreen):is(.NowBarSide__Right):is(.NowBarStatus__Open) .ViewControls:hover {
+#DockBridgePage:not(.Fullscreen):is(.NowBarSide__Right):is(.NowBarStatus__Open) .ViewControls:hover {
   opacity: 1 !important;
   right: var(--ControlsHoverOffset) !important;
   scale: var(--ControlsHoverScale) !important;
 }
 
-#SpicyLyricsPage:not(.Fullscreen):is(.NowBarSide__Right):is(.NowBarStatus__Open):hover .ViewControls {
+#DockBridgePage:not(.Fullscreen):is(.NowBarSide__Right):is(.NowBarStatus__Open):hover .ViewControls {
   opacity: .6;
   right: var(--PageHoverOffset);
   scale: var(--PageHoverScale);
 } */
 
-#SpicyLyricsPage .ViewControls button {
+#DockBridgePage .ViewControls button {
   cursor: pointer;
 }
 
-body:not(.SpicyLyrics_StaticBackground)
+body:not(.DockBridge_StaticBackground)
   .Root__right-sidebar:has(.main-nowPlayingView-section, canvas) {
   --background-tint: color-mix(in srgb, rgb(var(--spice-rgb-selected-row)) 7%, transparent);
   --spice-card: var(--background-tint);
   --background-tinted-base: var(--background-tint);
 }
 
-body:not(.SpicyLyrics_StaticBackground)
+body:not(.DockBridge_StaticBackground)
   .Root__right-sidebar:has(.spicy-dynamic-bg):has(.main-nowPlayingView-section, canvas)
   .main-nowPlayingView-content {
   background: transparent;
 }
 
-body:not(.SpicyLyrics_StaticBackground)
+body:not(.DockBridge_StaticBackground)
   .Root__right-sidebar:has(.spicy-dynamic-bg):has(.main-nowPlayingView-section, canvas)
   .main-nowPlayingView-contextItemInfo:before {
   display: none;
 }
 
-body:not(.SpicyLyrics_StaticBackground)
+body:not(.DockBridge_StaticBackground)
   .Root__right-sidebar:has(.spicy-dynamic-bg):has(.main-nowPlayingView-section, canvas)
   .spicy-dynamic-bg
   div[data-overlayscrollbars-viewport],
@@ -207,7 +207,7 @@ body:not(.SpicyLyrics_StaticBackground)
   background: transparent;
 }
 
-body:not(.SpicyLyrics_StaticBackground)
+body:not(.DockBridge_StaticBackground)
   .Root__right-sidebar:has(.spicy-dynamic-bg):has(.main-nowPlayingView-section, canvas)
   .spicy-dynamic-bg
   .main-nowPlayingView-coverArtContainer
@@ -219,7 +219,7 @@ body:not(.SpicyLyrics_StaticBackground)
   display: none;
 }
 
-body:not(.SpicyLyrics_StaticBackground)
+body:not(.DockBridge_StaticBackground)
   .Root__right-sidebar:has(.spicy-dynamic-bg):has(.main-nowPlayingView-section, canvas)
   .spicy-dynamic-bg
   .main-trackInfo-artists {
@@ -227,24 +227,24 @@ body:not(.SpicyLyrics_StaticBackground)
   opacity: 0.75;
 }
 
-body:not(.SpicyLyrics_StaticBackground)
+body:not(.DockBridge_StaticBackground)
   .Root__right-sidebar:has(.spicy-dynamic-bg):has(.main-nowPlayingView-section, canvas)
   .main-nowPlayingView-coverArt {
   box-shadow: 0 9px 20px 0 rgba(0, 0, 0, 0.271);
   opacity: 0.95;
 }
 
-body:not(.SpicyLyrics_StaticBackground)
+body:not(.DockBridge_StaticBackground)
   .Root__right-sidebar:has(.spicy-dynamic-bg):has(.main-nowPlayingView-section, canvas)
   .main-nowPlayingView-section:not(:has(.search-searchCategory-carousel)):not(:has(button[type="button"])),
-body:not(.SpicyLyrics_StaticBackground)
+body:not(.DockBridge_StaticBackground)
   .Root__right-sidebar:has(.spicy-dynamic-bg):has(.main-nowPlayingView-section, canvas)
   .main-nowPlayingView-section.QR9JmVmX9LYwo62NRtew
   .CvxzmyND_aGd2RR8ZoSr,
-body:not(.SpicyLyrics_StaticBackground)
+body:not(.DockBridge_StaticBackground)
   .Root__right-sidebar:has(.spicy-dynamic-bg):has(.main-nowPlayingView-section, canvas)
   .Uw4tcZdmh7s4BMdgCCuu,
-body:not(.SpicyLyrics_StaticBackground)
+body:not(.DockBridge_StaticBackground)
   .Root__right-sidebar:has(.spicy-dynamic-bg):has(.main-nowPlayingView-section, canvas)
   .main-nowPlayingView-section.main-nowPlayingView-aboutArtist .jHqD4CkJSTwpZihD {
   background-color: var(--background-tinted-base) !important;
@@ -252,13 +252,13 @@ body:not(.SpicyLyrics_StaticBackground)
 }
 
 
-body:not(.SpicyLyrics_StaticBackground)
+body:not(.DockBridge_StaticBackground)
   .Root__right-sidebar:has(.spicy-dynamic-bg):has(.main-nowPlayingView-section, canvas)
   .main-nowPlayingView-section:has(button[type="button"]) {
   background-color: transparent;
 }
 
-body:not(.SpicyLyrics_StaticBackground)
+body:not(.DockBridge_StaticBackground)
   .Root__right-sidebar:has(.spicy-dynamic-bg):has(.main-nowPlayingView-section, canvas)
   button[type="button"] {
   /* background-color: var(--background-tinted-base); */
@@ -266,7 +266,7 @@ body:not(.SpicyLyrics_StaticBackground)
   /* color: hsla(0, 0%, 100%, 0.8); */
 }
 
-body:not(.SpicyLyrics_StaticBackground)
+body:not(.DockBridge_StaticBackground)
   .Root__right-sidebar:has(.spicy-dynamic-bg):has(.main-nowPlayingView-section, canvas)
   button[type="button"]
   .Button-sm-buttonSecondary-isUsingKeyboard-useBrowserDefaultFocusStyle,
@@ -276,46 +276,46 @@ body:not(.SpicyLyrics_StaticBackground)
   border: 1px solid hsla(0, 0%, 100%, 0.5);
 }
 
-#SpicyLyricsPageSvg {
+#DockBridgePageSvg {
   fill: currentColor;
   transform: translateY(2px);
 }
 
-#SpicyLyrics_PopupLyricsButton svg {
+#DockBridge_PopupLyricsButton svg {
   fill: var(--encore-icon-fill, currentColor);
   height: var(--encore-icon-height, var(--encore-graphic-size-decorative-base));
   width: var(--encore-icon-width, var(--encore-graphic-size-decorative-base));
   transform: translateY(2px);
 }
 
-body.SpicySidebarLyrics__Active button:has(#SpicyLyricsPageSvg) {
+body.DockBridgeSidebarLyrics__Active button:has(#DockBridgePageSvg) {
   display: none !important;
 }
 
-button:has(#SpicyLyricsPageSvg):after {
+button:has(#DockBridgePageSvg):after {
   transform: translateX(-370%) translateY(-40%) !important;
 }
 
 /* "Page Not Visible" fix */
-.Root__main-view:has(#SpicyLyricsPage),
-.Root__main-view:has(#SpicyLyricsPage) .KL8t9WB65UfUEPuTFAhO,
-.Root__main-view:has(#SpicyLyricsPage) .main-content-view,
-.Root__main-view:has(#SpicyLyricsPage) .main-view-container,
-.Root__main-view:has(#SpicyLyricsPage) .main-view-container__scroll-node,
-.Root__main-view:has(#SpicyLyricsPage) .main-view-container .div[data-overlayscrollbars-viewport] {
+.Root__main-view:has(#DockBridgePage),
+.Root__main-view:has(#DockBridgePage) .KL8t9WB65UfUEPuTFAhO,
+.Root__main-view:has(#DockBridgePage) .main-content-view,
+.Root__main-view:has(#DockBridgePage) .main-view-container,
+.Root__main-view:has(#DockBridgePage) .main-view-container__scroll-node,
+.Root__main-view:has(#DockBridgePage) .main-view-container .div[data-overlayscrollbars-viewport] {
   height: 100% !important;
 }
 
-body:not(:has(.Root__main-view-overlay #SpicyLyricsPage:is(.Fullscreen)))
-  #SpicyLyrics_FullscreenButton {
+body:not(:has(.Root__main-view-overlay #DockBridgePage:is(.Fullscreen)))
+  #DockBridge_FullscreenButton {
   scale: 1.25;
 }
 
-#SpicyLyrics_FullscreenButton {
+#DockBridge_FullscreenButton {
   color: rgba(var(--spice-rgb-selected-row), 0.7) !important;
 }
 
-#SpicyLyrics_FullscreenButton svg {
+#DockBridge_FullscreenButton svg {
   fill: currentColor;
 }
 
@@ -326,18 +326,18 @@ body:not(:has(.Root__main-view-overlay .BeautifulLyricsPage:is(.Fullscreen)))
   opacity: 0.65 !important;
 }
 
-#SpicyLyricsPage .MediaImageContainer,
-#SpicyLyricsPage .MediaContent {
+#DockBridgePage .MediaImageContainer,
+#DockBridgePage .MediaContent {
   user-select: none;
 }
 
-#SpicyLyricsPage .ViewControls svg {
+#DockBridgePage .ViewControls svg {
   aspect-ratio: 1;
   height: calc(var(--ViewControlSize) * 0.4);
   width: auto;
 }
 /* 
-#SpicyLyricsPage.Fullscreen .ViewControls svg {
+#DockBridgePage.Fullscreen .ViewControls svg {
   height: calc(var(--ViewControlSize)* .4);
 } */
 
@@ -385,8 +385,8 @@ body:not(:has(.Root__main-view-overlay .BeautifulLyricsPage:is(.Fullscreen)))
   background-color: rgb(206, 206, 206);
 }
 
-/* .QdB2YtfEq0ks5O4QbtwX .WRGTOibB8qNEkgPNtMxq:has(#SpicyLyricsPage) *:not(#SpicyLyricsPage),
-.QdB2YtfEq0ks5O4QbtwX:has(#SpicyLyricsPage) .DJcMUKFwkFECf5ksmSfU {
+/* .QdB2YtfEq0ks5O4QbtwX .WRGTOibB8qNEkgPNtMxq:has(#DockBridgePage) *:not(#DockBridgePage),
+.QdB2YtfEq0ks5O4QbtwX:has(#DockBridgePage) .DJcMUKFwkFECf5ksmSfU {
   display: none !important;
 } */
 
@@ -426,57 +426,57 @@ body:not(:has(.Root__main-view-overlay .BeautifulLyricsPage:is(.Fullscreen)))
   z-index: -1;
 } */
 
-body.SpicySidebarLyrics__Active .eguwzH_QWTBXry7hiNj3:has([id="settings.showFriendActivity"]),
-body.SpicySidebarLyrics__Active .x-settings-row:has([id="settings.showFriendActivity"]) {
+body.DockBridgeSidebarLyrics__Active .eguwzH_QWTBXry7hiNj3:has([id="settings.showFriendActivity"]),
+body.DockBridgeSidebarLyrics__Active .x-settings-row:has([id="settings.showFriendActivity"]) {
   display: none !important;
 }
 
-body.SpicySidebarLyrics__Active .Root__right-sidebar .XOawmCGZcQx4cesyNfVO > :not(#SpicyLyricsPage),
-body.SpicySidebarLyrics__Active
+body.DockBridgeSidebarLyrics__Active .Root__right-sidebar .XOawmCGZcQx4cesyNfVO > :not(#DockBridgePage),
+body.DockBridgeSidebarLyrics__Active
   .Root__right-sidebar
   .oXO9_yYs6JyOwkBn8E4a
-  > :not(#SpicyLyricsPage) {
+  > :not(#DockBridgePage) {
   display: none !important;
 }
 
-body.SpicySidebarLyrics__Active [data-testid="control-button-queue"] {
+body.DockBridgeSidebarLyrics__Active [data-testid="control-button-queue"] {
   color: rgba(var(--spice-rgb-selected-row), 0.7) !important;
 }
 
-body.SpicySidebarLyrics__Active [data-testid="control-button-queue"]::after {
+body.DockBridgeSidebarLyrics__Active [data-testid="control-button-queue"]::after {
   display: none !important;
 }
 
-body.SpicySidebarLyrics__Active #SpicyLyricsPage .NowBar {
+body.DockBridgeSidebarLyrics__Active #DockBridgePage .NowBar {
   display: none !important;
 }
 
-body.SpicySidebarLyrics__Active #SpicyLyricsPage {
+body.DockBridgeSidebarLyrics__Active #DockBridgePage {
   --LyricsLeftSidePadding: 12cqw !important;
   --LyricsRightSidePadding: 7.5cqw !important;
 }
 
-#SpicyLyricsPage.SidebarTransition__Opening {
+#DockBridgePage.SidebarTransition__Opening {
   left: 100%;
 }
 
-#SpicyLyricsPage.SidebarTransition__Closing {
+#DockBridgePage.SidebarTransition__Closing {
   left: -100%;
 }
 
 *:has(
-    > #SpicyLyricsPage.SidebarTransition__Opening,
-    > #SpicyLyricsPage.SidebarTransition__Closing
+    > #DockBridgePage.SidebarTransition__Opening,
+    > #DockBridgePage.SidebarTransition__Closing
   ) {
   overflow: hidden !important;
 }
 
-#SpicyLyricsPage:not(.Lyrics_RomanizationAvailable) .ViewControls #RomanizationToggle,
-#SpicyLyricsPage:not(.SpicyRenderer) .ViewControls #RomanizationToggle {
+#DockBridgePage:not(.Lyrics_RomanizationAvailable) .ViewControls #RomanizationToggle,
+#DockBridgePage:not(.SpicyRenderer) .ViewControls #RomanizationToggle {
   display: none !important;
 }
 
-#SpicyLyricsPage.CompactifyEnabledCompactMode .ViewControls .ViewControl#CompactModeToggle {
+#DockBridgePage.CompactifyEnabledCompactMode .ViewControls .ViewControl#CompactModeToggle {
   display: none !important;
 }
 
@@ -561,7 +561,7 @@ body.SpicySidebarLyrics__Active #SpicyLyricsPage {
 }
 
 
-.Root__main-view:has(#SpicyLyricsPage) > :is(header, .main-topBar-container) {
+.Root__main-view:has(#DockBridgePage) > :is(header, .main-topBar-container) {
   display: none !important;
 }
 
@@ -598,11 +598,11 @@ body.SpicySidebarLyrics__Active #SpicyLyricsPage {
   margin-bottom: 0px;
 }
 
-#SpicyLyricsPage .ContentBox.LyricsHidden .ViewControls #NowBarSideToggle {
+#DockBridgePage .ContentBox.LyricsHidden .ViewControls #NowBarSideToggle {
   display: none !important;
 }
 
-#SpicyLyricsPage.episode-content-type .ContentBox .NowBar .Heart {
+#DockBridgePage.episode-content-type .ContentBox .NowBar .Heart {
   opacity: 0 !important;
   pointer-events: none !important;
 }

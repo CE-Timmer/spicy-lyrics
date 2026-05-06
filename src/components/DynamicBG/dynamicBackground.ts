@@ -3,6 +3,7 @@ import { Signal } from "@spikerko/web-modules/Signal";
 import Defaults from "../Global/Defaults.ts";
 import Global from "../Global/Global.ts";
 import { SpotifyPlayer } from "../Global/SpotifyPlayer.ts";
+import { IS_DOCKBRIDGE_BUILD } from "../../utils/runtimeNamespace.ts";
 import ArtistVisuals from "./ArtistVisuals/Main.ts";
 import { PageContainer } from "../Pages/PageView.ts";
 import Kawarp, { type KawarpOptions } from "@kawarp/core";
@@ -183,38 +184,40 @@ const getColorBackgroundElement = (): HTMLElement | null => {
   return el;
 };
 
-Global.Event.listen("playback:songchange", () => {
-  if (Defaults.StaticBackground && Defaults.StaticBackgroundType === "Color" && PageContainer) {
-    if (staticColorBgTransitionTimeout) {
-      clearTimeout(staticColorBgTransitionTimeout);
-      staticColorBgTransitionTimeout = null;
+if (!IS_DOCKBRIDGE_BUILD) {
+  Global.Event.listen("playback:songchange", () => {
+    if (Defaults.StaticBackground && Defaults.StaticBackgroundType === "Color" && PageContainer) {
+      if (staticColorBgTransitionTimeout) {
+        clearTimeout(staticColorBgTransitionTimeout);
+        staticColorBgTransitionTimeout = null;
 
-      const dynamicBg = getColorBackgroundElement();
-      if (dynamicBg) {
-        const min = dynamicBg.style.getPropertyValue("--MinContrastColor").trim();
-        const high = dynamicBg.style.getPropertyValue("--HighContrastColor").trim();
-        const overlay = dynamicBg.style.getPropertyValue("--OverlayColor").trim();
-        if (
-          min !== COLOR_BG_FALLBACK_RGB ||
-          high !== COLOR_BG_FALLBACK_RGB ||
-          overlay !== COLOR_BG_FALLBACK_RGB
-        ) {
-          dynamicBg.style.setProperty("--MinContrastColor", COLOR_BG_FALLBACK_RGB);
-          dynamicBg.style.setProperty("--HighContrastColor", COLOR_BG_FALLBACK_RGB);
-          dynamicBg.style.setProperty("--OverlayColor", COLOR_BG_FALLBACK_RGB);
+        const dynamicBg = getColorBackgroundElement();
+        if (dynamicBg) {
+          const min = dynamicBg.style.getPropertyValue("--MinContrastColor").trim();
+          const high = dynamicBg.style.getPropertyValue("--HighContrastColor").trim();
+          const overlay = dynamicBg.style.getPropertyValue("--OverlayColor").trim();
+          if (
+            min !== COLOR_BG_FALLBACK_RGB ||
+            high !== COLOR_BG_FALLBACK_RGB ||
+            overlay !== COLOR_BG_FALLBACK_RGB
+          ) {
+            dynamicBg.style.setProperty("--MinContrastColor", COLOR_BG_FALLBACK_RGB);
+            dynamicBg.style.setProperty("--HighContrastColor", COLOR_BG_FALLBACK_RGB);
+            dynamicBg.style.setProperty("--OverlayColor", COLOR_BG_FALLBACK_RGB);
+          }
         }
       }
+
+      staticColorBgTransitionTimeout = setTimeout(() => {
+        const contentBox = PageContainer.querySelector<HTMLElement>(".ContentBox");
+        if (contentBox) ApplyDynamicBackground(contentBox);
+
+        clearTimeout(staticColorBgTransitionTimeout);
+        staticColorBgTransitionTimeout = null;
+      }, 1000);
     }
-
-    staticColorBgTransitionTimeout = setTimeout(() => {
-      const contentBox = PageContainer.querySelector<HTMLElement>(".ContentBox");
-      if (contentBox) ApplyDynamicBackground(contentBox);
-
-      clearTimeout(staticColorBgTransitionTimeout);
-      staticColorBgTransitionTimeout = null;
-    }, 1000);
-  }
-})
+  })
+}
 
 /** Successful analysis, or `null` once we know the track has no analysis (stops progress-handler spam). */
 const audioAnalysisCache = new Map<string, AudioAnalysisData | null>();
@@ -264,56 +267,62 @@ const resetDynamicBackgroundAnimationSpeed = () => {
   setDynamicBackgroundAnimationSpeed(1);
 };
 
-Global.Event.listen("playback:songchange", () => {
-  latestPlaybackTrackId = SpotifyPlayer.GetId();
+if (!IS_DOCKBRIDGE_BUILD) {
+  Global.Event.listen("playback:songchange", () => {
+    latestPlaybackTrackId = SpotifyPlayer.GetId();
 
-  if (latestPlaybackTrackId) {
-    pruneAudioAnalysisCache(latestPlaybackTrackId);
-  } else {
-    audioAnalysisCache.clear();
-  }
-});
+    if (latestPlaybackTrackId) {
+      pruneAudioAnalysisCache(latestPlaybackTrackId);
+    } else {
+      audioAnalysisCache.clear();
+    }
+  });
+}
 
 const applyPlayPauseAnimationSpeed = (isPaused: boolean) => {
   setDynamicBackgroundAnimationSpeed(isPaused ? 0.1 : 1);
 };
 
-Global.Event.listen("playback:playpause", (e: { data?: { isPaused?: boolean } }) => {
-  applyPlayPauseAnimationSpeed(!!e?.data?.isPaused);
-});
+if (!IS_DOCKBRIDGE_BUILD) {
+  Global.Event.listen("playback:playpause", (e: { data?: { isPaused?: boolean } }) => {
+    applyPlayPauseAnimationSpeed(!!e?.data?.isPaused);
+  });
+}
 
-Global.Event.listen("playback:progress", async (e) => {
-  const songId = SpotifyPlayer.GetId();
-  if (!songId) {
-    resetDynamicBackgroundAnimationSpeed();
-    return;
-  }
+if (!IS_DOCKBRIDGE_BUILD) {
+  Global.Event.listen("playback:progress", async (e) => {
+    const songId = SpotifyPlayer.GetId();
+    if (!songId) {
+      resetDynamicBackgroundAnimationSpeed();
+      return;
+    }
 
-  latestPlaybackTrackId = songId;
-  const requestTrackId = songId;
+    latestPlaybackTrackId = songId;
+    const requestTrackId = songId;
 
-  const audioAnalysisData = await getAudioAnalysisForTrack(requestTrackId);
-  if (!audioAnalysisData) {
-    resetDynamicBackgroundAnimationSpeed();
-    return;
-  }
+    const audioAnalysisData = await getAudioAnalysisForTrack(requestTrackId);
+    if (!audioAnalysisData) {
+      resetDynamicBackgroundAnimationSpeed();
+      return;
+    }
 
-  // Prevent stale async results from old tracks applying after rapid song switches.
-  const currentTrackId = SpotifyPlayer.GetId();
-  if (!currentTrackId || currentTrackId !== requestTrackId || latestPlaybackTrackId !== requestTrackId) {
-    return;
-  }
+    // Prevent stale async results from old tracks applying after rapid song switches.
+    const currentTrackId = SpotifyPlayer.GetId();
+    if (!currentTrackId || currentTrackId !== requestTrackId || latestPlaybackTrackId !== requestTrackId) {
+      return;
+    }
 
-  pruneAudioAnalysisCache(requestTrackId);
+    pruneAudioAnalysisCache(requestTrackId);
 
-  const currentTimeMs = SpotifyPlayer.GetPosition();
-  const currentTime = currentTimeMs / 1000;
+    const currentTimeMs = SpotifyPlayer.GetPosition();
+    const currentTime = currentTimeMs / 1000;
 
-  const speedMultiplier = animSpeedController.getSpeedMultiplier(currentTime, audioAnalysisData);
+    const speedMultiplier = animSpeedController.getSpeedMultiplier(currentTime, audioAnalysisData);
 
-  KawarpMap.forEach((kawarpInstance) => {
-    void kawarpInstance.setOptions({
-      animationSpeed: speedMultiplier
+    KawarpMap.forEach((kawarpInstance) => {
+      void kawarpInstance.setOptions({
+        animationSpeed: speedMultiplier
+      })
     })
   })
-})
+}

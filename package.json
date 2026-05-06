@@ -1,6 +1,7 @@
 {
-  "name": "spicy-lyrics",
+  "name": "dockbridge",
   "author": "Spikerko",
+  "description": "DockBridge is a Spicetify sidecar extension that feeds rich playback and lyric data into SpotifyDock while coexisting with the original Spicy Lyrics extension.",
   "scripts": {
     "sc": "spicetify-creator",
     "dev": "spicetify-creator dev",

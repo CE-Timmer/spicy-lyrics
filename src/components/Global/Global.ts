@@ -1,7 +1,7 @@
 import Event from "../../utils/EventManager.ts";
-import { ProjectName } from "../../../project/config.ts";
+import { APP_GLOBAL_SCOPE } from "../../utils/runtimeNamespace.ts";
 
-const GLOBAL_SCOPE_KEY = ProjectName === "dockbridge" ? "_dockbridge" : "_spicy_lyrics";
+const GLOBAL_SCOPE_KEY = APP_GLOBAL_SCOPE;
 
 window[GLOBAL_SCOPE_KEY] = window[GLOBAL_SCOPE_KEY] ?? {};
 const SCOPE_ROOT = window[GLOBAL_SCOPE_KEY];

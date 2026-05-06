@@ -1,5 +1,6 @@
 import Whentil, { type CancelableTask } from "@spikerko/tools/Whentil";
 import storage from "../../utils/storage.ts";
+import { APP_PAGE_SELECTOR, APP_SIDEBAR_BODY_CLASS, IS_DOCKBRIDGE_BUILD } from "../../utils/runtimeNamespace.ts";
 
 import PageView from "../Pages/PageView.ts";
 
@@ -33,9 +34,9 @@ const getDevicesContainerElement = () =>
   document.querySelector<HTMLElement>(
     ".Root__right-sidebar > div:first-of-type:has(.OINH5zA0pQyzffwo, .FNi2RAtuzIc9THq8HYIW):not(:has(.main-nowPlayingView-coverArtContainer))"
   );
-// const getSpicyLyricsPageElement = () => document.querySelector<HTMLElement>('#SpicyLyricsPage');
+// const getSpicyLyricsPageElement = () => document.querySelector<HTMLElement>('#DockBridgePage');
 const getParentContainerChildren = (parentContainer: HTMLElement) =>
-  parentContainer.querySelector<HTMLElement>(":scope > *:not(#SpicyLyricsPage)");
+  parentContainer.querySelector<HTMLElement>(`:scope > *:not(${APP_PAGE_SELECTOR})`);
 
 export const getNowPlayingViewPlaybarButton = () => {
   // console.log("[Spicy Lyrics Debug] getNowPlayingViewPlaybarButton");
@@ -51,11 +52,11 @@ export const getNowPlayingViewParentContainer = () => {
 };
 const appendOpen = () => {
   // console.log("[Spicy Lyrics Debug] appendOpen");
-  getSpicySidebarActiveBody().classList.add("SpicySidebarLyrics__Active");
+  getSpicySidebarActiveBody().classList.add(APP_SIDEBAR_BODY_CLASS);
 };
 const appendClosed = () => {
   // console.log("[Spicy Lyrics Debug] appendClosed");
-  getSpicySidebarActiveBody().classList.remove("SpicySidebarLyrics__Active");
+  getSpicySidebarActiveBody().classList.remove(APP_SIDEBAR_BODY_CLASS);
 };
 
 export const getQueuePlaybarButton = () => {
@@ -97,7 +98,7 @@ export function RegisterSidebarLyrics() {
 let currentNPVWhentil: CancelableTask | null = null;
 let onOpen_wasThingOpen: string | undefined;
 
-// --- Helper to observe removal of #SpicyLyricsPage ---
+// --- Helper to observe removal of #DockBridgePage ---
 let spicyLyricsPageObserver: MutationObserver | null = null;
 let spicySidebarAsideObserver: MutationObserver | null = null;
 
@@ -117,18 +118,18 @@ export function cleanupSidebarLyricsObservers() {
 }
 
 /**
- * Observes removal of #SpicyLyricsPage and also addition of a new <aside> 
+ * Observes removal of #DockBridgePage and also addition of a new <aside> 
  * into the parent container. Cleanup occurs if either event happens.
  */
 function observeSpicyLyricsPageRemoval(cleanupFn: () => void) {
   cleanupSidebarLyricsObservers();
 
-  const spicyLyricsEl = document.querySelector("#SpicyLyricsPage");
+  const spicyLyricsEl = document.querySelector(APP_PAGE_SELECTOR);
   if (!spicyLyricsEl) return;
   const parent = spicyLyricsEl.parentElement;
   if (!parent) return;
 
-  // Observe for removal of #SpicyLyricsPage
+  // Observe for removal of #DockBridgePage
   spicyLyricsPageObserver = new MutationObserver((mutations) => {
     for (const mutation of mutations) {
       for (const n of Array.from(mutation.removedNodes)) {
@@ -160,7 +161,7 @@ function observeSpicyLyricsPageRemoval(cleanupFn: () => void) {
 
 function runPageOpenWithCleanup(parentContainer: HTMLElement) {
   PageView.Open(parentContainer, true);
-  // After opening, observe #SpicyLyricsPage for removal and cleanup
+  // After opening, observe #DockBridgePage for removal and cleanup
   // Use setTimeout to wait for DOM update
   setTimeout(() => {
     observeSpicyLyricsPageRemoval(() => {
@@ -325,8 +326,10 @@ export function CleanupQueueButtonListener() {
   QBClickELController = undefined;
 }
 
-Spicetify.Player.addEventListener("songchange", (e: any) => {
-  if (e.data === null) {
-    CloseSidebarLyrics();
-  }
-});
+if (!IS_DOCKBRIDGE_BUILD) {
+  Spicetify.Player.addEventListener("songchange", (e: any) => {
+    if (e.data === null) {
+      CloseSidebarLyrics();
+    }
+  });
+}

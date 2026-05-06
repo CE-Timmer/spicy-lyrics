@@ -1,4 +1,5 @@
 import { GetExpireStore } from "@spikerko/tools/Cache";
+import { APP_CACHE_PREFIX } from "./runtimeNamespace.ts";
 import type { AudioAnalysisData } from "../components/DynamicBG/BackgroundAnimationController";
 
 interface CachedAudioAnalysis {
@@ -21,7 +22,7 @@ function getCosmosErrorStatus(error: unknown): number | undefined {
     return undefined;
 }
 
-export const AudioAnalysisStore = GetExpireStore<CachedAudioAnalysis>("SpicyLyrics_AudioAnalysis", 1, {
+export const AudioAnalysisStore = GetExpireStore<CachedAudioAnalysis>(`${APP_CACHE_PREFIX}_AudioAnalysis`, 1, {
     Duration: 1,
     Unit: "Months"
 });

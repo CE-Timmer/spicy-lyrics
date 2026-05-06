@@ -1,30 +1,130 @@
-# Spicy Lyrics
+# DockBridge
 
-### Check out our *[Sitee](https://yoursit.ee/lyrics)*
-#### Make your own at -> [https://yoursit.ee](https://yoursit.ee)
+`DockBridge` is a Spicetify extension built to feed rich playback and lyric data into `SpotifyDock`.
 
-# How to install Spicy Lyrics
+It keeps the Spicy Lyrics core pipeline available for lyric state, timing, and metadata capture, but removes the user-openable UI lifecycle so it can run quietly beside the original Spicy Lyrics extension.
 
-## 1. Using the Spicetify Marketplace (recommended)
-1. Search `Spicy Lyrics` under the "Extensions" tab
-2. Click the Install button on the Spicy Lyrics extension
-3. All done!
+## What It Does
 
-## 2. Externally (not recommended)
-1. Make sure you have [Spicetify](https://spicetify.app) installed
-2. Download the [spicy-lyrics.mjs](./builds/spicy-lyrics.mjs) file
-3. Put the file inside the Spicetify Extensions directory. Find the correct directory here: [https://spicetify.app/docs/customization/extensions#manual-installation](https://spicetify.app/docs/customization/extensions#manual-installation)
-4. Then, run ```spicetify config extensions spicy-lyrics.mjs```
-5. Then apply Spicetify by running ```spicetify apply```
-6. All done!
+- streams current track metadata to SpotifyDock
+- streams synced lyric lines and timing data
+- preserves singer-side alignment data when available
+- recovers from the bad `lyrics: []` + `noLyrics: false` state by retrying the internal lyric fetch/apply flow
+- coexists with the original `spicy-lyrics.mjs` by using DockBridge-specific globals, storage keys, DOM ids, styles, and modal tags
 
-[![Github Version](https://img.shields.io/github/v/release/spikerko/spicy-lyrics)](https://github.com/spikerko/spicy-lyrics/) [![Github Stars badge](https://img.shields.io/github/stars/spikerko/spicy-lyrics?style=social)](https://github.com/spikerko/spicy-lyrics/) [![Discord Badge](https://dcbadge.limes.pink/api/server/uqgXU5wh8j?style=flat)](https://discord.com/invite/uqgXU5wh8j)
+## Intended Setup
 
-Hi, I'm Spikerko (the person who made this repo). I've been really passionate about this project, and I'm really happy for this project.
+Use both of these together:
 
-I've seen a problem with the Spotify Lyrics. They're plain, just static colors. So I wanted to build my own version. And here it is: **Spicy Lyrics**. Hope you like it!
+1. Original `Spicy Lyrics`
+2. `DockBridge`
 
-![Extension Example](./previews/page.gif)
+That gives you:
 
+- original Spicy Lyrics page/buttons/renderer inside Spotify
+- DockBridge as the sidecar that sends lyric payloads to SpotifyDock
 
-*Inspired by [Beautiful Lyrics](https://github.com/surfbryce/beautiful-lyrics)*
+## Installation
+
+### 1. Install original Spicy Lyrics
+
+Install the original extension the normal way, for example through Spicetify Marketplace or your existing `spicy-lyrics.mjs` setup.
+
+Original project:
+- https://github.com/Spikerko/spicy-lyrics
+
+### 2. Install DockBridge
+
+1. Build this repo:
+
+```powershell
+npm install
+npm run build
+```
+
+2. Copy the built extension to your Spicetify extensions folder:
+
+```powershell
+Copy-Item .\dist\dockbridge.js "$env:APPDATA\spicetify\Extensions\dockbridge.js" -Force
+```
+
+3. Add it to your Spicetify extensions list:
+
+```powershell
+spicetify config extensions "dockbridge.js"
+```
+
+If you are already using other extensions, append `dockbridge.js` to your existing list instead of replacing everything.
+
+4. Apply and restart Spotify:
+
+```powershell
+spicetify apply
+```
+
+## Usage With SpotifyDock
+
+In `SpotifyDock`:
+
+1. Open Settings
+2. Set `Lyrics Source` to `Spicy Lyrics`
+3. Keep original Spicy Lyrics enabled
+4. Keep `dockbridge.js` enabled
+
+DockBridge will then provide the payloads SpotifyDock needs without requiring the full Spicy UI to be opened from DockBridge itself.
+
+## Development
+
+### Build
+
+```powershell
+npm run build
+```
+
+Output:
+
+- [dist/dockbridge.js](./dist/dockbridge.js)
+
+### Dev
+
+```powershell
+npm run dev
+```
+
+## Notes On Coexistence
+
+This repo was adapted specifically so it can sit beside original Spicy Lyrics more safely.
+
+DockBridge now uses its own:
+
+- runtime globals
+- metadata scope
+- storage prefix
+- cache prefix
+- page ids
+- style ids
+- sidebar body class
+- modal custom element tag
+
+It also disables its own page/fullscreen/popup/sidebar UI lifecycle in DockBridge mode, so the original Spicy Lyrics buttons and pages can remain the user-facing version.
+
+## Attribution
+
+This project is built on top of the original Spicy Lyrics codebase by **Spikerko**.
+
+Please support the original project here:
+
+- https://github.com/Spikerko/spicy-lyrics
+
+Original project preview:
+
+![Spicy Lyrics Preview](./previews/page.gif)
+
+## License
+
+This repository keeps the same license as the original Spicy Lyrics project.
+
+See:
+
+- [LICENSE](./LICENSE)
+

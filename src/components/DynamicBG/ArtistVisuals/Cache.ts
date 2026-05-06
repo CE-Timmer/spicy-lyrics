@@ -1,6 +1,7 @@
 import { GetExpireStore } from "@spikerko/tools/Cache";
+import { APP_CACHE_PREFIX } from "../../../utils/runtimeNamespace.ts";
 
-const CacheStore = GetExpireStore("SpicyLyrics_ArtistVisuals", 3, {
+const CacheStore = GetExpireStore(`${APP_CACHE_PREFIX}_ArtistVisuals`, 3, {
   Unit: "Days",
   Duration: 3,
 });

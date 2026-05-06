@@ -3,6 +3,7 @@ import Session from "../Global/Session.ts";
 import PageView from "../Pages/PageView.ts";
 import Fullscreen from "./Fullscreen.ts";
 import { isSpicySidebarMode, CloseSidebarLyrics } from "./SidebarLyrics.ts"
+import { APP_STYLE_ID } from "../../utils/runtimeNamespace.ts";
 
 export let IsPIP = false;
 export let _IsPIP_after = false;
@@ -78,8 +79,8 @@ export const OpenPopupLyrics = async () => {
   });
 
   // Copy the main SpicyLyrics style element
-  // Find any <style> element in the DOM that includes '#SpicyLyricsPage' in its textContent
-  // Find all <style> elements in the DOM that include '#SpicyLyricsPage' in their textContent
+  // Find any <style> element in the DOM that includes '#DockBridgePage' in its textContent
+  // Find all <style> elements in the DOM that include '#DockBridgePage' in their textContent
   const spicyLyricsStyleElement = document.querySelector("#slstyles");
   let spicyLyricsStyleContent: string | null = null;
 
@@ -109,10 +110,10 @@ export const OpenPopupLyrics = async () => {
   }
 
   // Additionally, copy the styles element with the id 'spicyLyrics-additionalStyling'
-  const additionalStyling = document.getElementById("spicyLyrics-additionalStyling");
+  const additionalStyling = document.getElementById(APP_STYLE_ID);
   if (additionalStyling) {
     const newAdditionalStyling = document.createElement("style");
-    newAdditionalStyling.id = "spicyLyrics-additionalStyling";
+    newAdditionalStyling.id = APP_STYLE_ID;
     newAdditionalStyling.textContent = additionalStyling.textContent;
     currentPipWindow.document.head.appendChild(newAdditionalStyling);
   }

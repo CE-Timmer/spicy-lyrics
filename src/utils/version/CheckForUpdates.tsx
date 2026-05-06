@@ -3,6 +3,7 @@ import { isDev } from "../../components/Global/Defaults.ts";
 import Session from "../../components/Global/Session.ts";
 import ReactDOM from "react-dom/client";
 import { PopupModal } from "../../components/Modal.ts";
+import { APP_UPDATE_ROUTE } from "../runtimeNamespace.ts";
 
 let ShownUpdateNotice = false;
 
@@ -28,7 +29,7 @@ export async function CheckForUpdates(force: boolean = false) {
         </div>
         <button
           onClick={() =>
-            Session.Navigate({ pathname: "/SpicyLyrics/Update" })
+            Session.Navigate({ pathname: APP_UPDATE_ROUTE })
           }
           className="btn-release"
           data-encore-id="buttonSecondary"

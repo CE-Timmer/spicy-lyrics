@@ -1,5 +1,5 @@
 
-#SpicyLyricsPage .ContentBox .LyricsContainer .LyricsContent {
+#DockBridgePage .ContentBox .LyricsContainer .LyricsContent {
   .LyricsNotice {
     position: absolute;
     top: 50%;
@@ -111,7 +111,7 @@
   }
 }
 
-.spicy-pip-wrapper #SpicyLyricsPage .ContentBox .LyricsContainer .LyricsContent {
+.spicy-pip-wrapper #DockBridgePage .ContentBox .LyricsContainer .LyricsContent {
   
   .LyricsNotice {
     top: 8cqh;
@@ -162,7 +162,7 @@ body.sl_settings_top {
  * when the text updates every second. The progress bar is offset manually to
  * preserve spacing.
  */
-body:has(#SpicyLyricsPage):not(:has(
+body:has(#DockBridgePage):not(:has(
   [id*="dribbblish"]
 )):not(
   .sltm__ThemeMatch__textdt

@@ -8,9 +8,10 @@ import Fullscreen from "../../components/Utils/Fullscreen.ts";
 import { Query } from "../API/Query.ts";
 import { SetWaitingForHeight } from "../Scrolling/ScrollToActiveLine.ts";
 import storage from "../storage.ts";
+import { APP_CACHE_PREFIX } from "../runtimeNamespace.ts";
 import { ProcessLyrics } from "./ProcessLyrics.ts";
 
-export const LyricsStore = GetExpireStore<any>("SpicyLyrics_LyricsStore", 12, {
+export const LyricsStore = GetExpireStore<any>(`${APP_CACHE_PREFIX}_LyricsStore`, 12, {
   Unit: "Days",
   Duration: 3,
 }, isDev as true);

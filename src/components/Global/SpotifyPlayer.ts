@@ -2,6 +2,7 @@
 import GetProgress, {
   _DEPRECATED___GetProgress,
 } from "../../utils/Gets/GetProgress.ts";
+import { IS_DOCKBRIDGE_BUILD } from "../../utils/runtimeNamespace.ts";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 //type ArtworkSize = "s" | "l" | "xl" | "d";
@@ -223,7 +224,7 @@ export const SpotifyPlayer = {
       await Spicetify.Platform.LibraryAPI.add({ uris });
     }
   },
-  Playbar: (() => {
+  Playbar: (IS_DOCKBRIDGE_BUILD ? (() => ({ Button: undefined, Widget: undefined })) : (() => {
     let rightContainer: HTMLElement | null;
     let sibling: HTMLElement | null;
     const buttonsStash = new Set<HTMLElement>();
@@ -493,5 +494,5 @@ export const SpotifyPlayer = {
     })();
 
     return { Button, Widget };
-  })(),
+  })())(),
 };

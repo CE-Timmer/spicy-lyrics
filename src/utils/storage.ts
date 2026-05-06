@@ -1,6 +1,6 @@
-import { ProjectName } from "../../project/config.ts";
+import { APP_STORAGE_PREFIX } from "./runtimeNamespace.ts";
 
-const prefix = ProjectName === "dockbridge" ? "DockBridge-" : "SpicyLyrics-";
+const prefix = APP_STORAGE_PREFIX;
 
 let currentlyFetching = false;
 

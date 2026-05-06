@@ -86,7 +86,7 @@ aside:has(.spicy-dynamic-bg) .iHa_q9pq4un3VNRQgwTx {
 }
 
 /* Low quality mode styles - kept unchanged as requested */
-#SpicyLyricsPage .spicy-dynamic-bg.StaticBackground {
+#DockBridgePage .spicy-dynamic-bg.StaticBackground {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -96,12 +96,12 @@ aside:has(.spicy-dynamic-bg) .iHa_q9pq4un3VNRQgwTx {
   transition: opacity 0.3s;
 }
 
-#SpicyLyricsPage .spicy-dynamic-bg.StaticBackground.Hidden {
+#DockBridgePage .spicy-dynamic-bg.StaticBackground.Hidden {
   opacity: 0;
 }
 
 /* Hide sidebar background when in fullscreen lyrics mode */
-body:has(#SpicyLyricsPage.Fullscreen) .Root__right-sidebar
+body:has(#DockBridgePage.Fullscreen) .Root__right-sidebar
   aside:is(.NowPlayingView, .spicy-dynamic-bg-in-this)
   .spicy-dynamic-bg {
   display: none;
@@ -113,7 +113,7 @@ body:has(#SpicyLyricsPage.Fullscreen) .Root__right-sidebar
   z-index: 1;
 }
 
-#SpicyLyricsPage .spicy-dynamic-bg.ColorBackground {
+#DockBridgePage .spicy-dynamic-bg.ColorBackground {
   /* background-color: rgba(0, 0, 0, 0.25); */
   /* background: linear-gradient(var(--ColorBackgroundRotation), var(--DesaturatedColor), var(--VibrantColor), var(--DarkVibrantColor), var(--BaseColor), var(--DesaturatedColor)); */
   background-color: rgba(var(--MinContrastColor));
@@ -128,7 +128,7 @@ body:has(#SpicyLyricsPage.Fullscreen) .Root__right-sidebar
   initial-value: 0deg;
 } */
 
-#SpicyLyricsPage .spicy-dynamic-bg.ColorBackground::before {
+#DockBridgePage .spicy-dynamic-bg.ColorBackground::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -140,7 +140,7 @@ body:has(#SpicyLyricsPage.Fullscreen) .Root__right-sidebar
   transition: background-color 1.5s;
 }
 
-#SpicyLyricsPage .spicy-dynamic-bg.ColorBackground::after {
+#DockBridgePage .spicy-dynamic-bg.ColorBackground::after {
   content: "";
   position: absolute;
   inset: 0;
@@ -151,17 +151,17 @@ body:has(#SpicyLyricsPage.Fullscreen) .Root__right-sidebar
   z-index: 5;
 }
 
-#SpicyLyricsPage .spicy-dynamic-bg.CanvasBackground {
+#DockBridgePage .spicy-dynamic-bg.CanvasBackground {
   width: 100%;
   height: 100%;
 }
 
-#SpicyLyricsPage .spicy-dynamic-bg.CanvasBackground video {
+#DockBridgePage .spicy-dynamic-bg.CanvasBackground video {
   width: 100%;
   height: 100%;
 }
 
-#SpicyLyricsPage .spicy-dynamic-bg.ColorBackground {
+#DockBridgePage .spicy-dynamic-bg.ColorBackground {
   z-index: -1 !important;
 }
 

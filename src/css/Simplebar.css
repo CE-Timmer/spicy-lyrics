@@ -1,4 +1,4 @@
-#SpicyLyricsPage [data-simplebar] {
+#DockBridgePage [data-simplebar] {
   position: relative;
   flex-direction: column;
   flex-wrap: wrap;
@@ -7,7 +7,7 @@
   align-items: flex-start;
 }
 
-#SpicyLyricsPage .simplebar-wrapper {
+#DockBridgePage .simplebar-wrapper {
   overflow: hidden;
   width: inherit;
   height: inherit;
@@ -15,7 +15,7 @@
   max-height: inherit;
 }
 
-#SpicyLyricsPage .simplebar-mask {
+#DockBridgePage .simplebar-mask {
   direction: inherit;
   position: absolute;
   overflow: hidden;
@@ -30,7 +30,7 @@
   z-index: 0;
 }
 
-#SpicyLyricsPage .simplebar-offset {
+#DockBridgePage .simplebar-offset {
   direction: inherit !important;
   box-sizing: inherit !important;
   resize: none !important;
@@ -44,7 +44,7 @@
   -webkit-overflow-scrolling: touch;
 }
 
-#SpicyLyricsPage .simplebar-content-wrapper {
+#DockBridgePage .simplebar-content-wrapper {
   direction: inherit;
   box-sizing: border-box !important;
   position: relative;
@@ -60,27 +60,27 @@
   transform: translate3d(0px, 0px, 0px);
 }
 
-#SpicyLyricsPage .simplebar-content-wrapper::-webkit-scrollbar,
-#SpicyLyricsPage .simplebar-hide-scrollbar::-webkit-scrollbar {
+#DockBridgePage .simplebar-content-wrapper::-webkit-scrollbar,
+#DockBridgePage .simplebar-hide-scrollbar::-webkit-scrollbar {
   display: none;
   width: 0;
   height: 0;
 }
 
-#SpicyLyricsPage .simplebar-content:before,
-#SpicyLyricsPage .simplebar-content:after {
+#DockBridgePage .simplebar-content:before,
+#DockBridgePage .simplebar-content:after {
   content: " ";
   display: table;
 }
 
-#SpicyLyricsPage .simplebar-placeholder {
+#DockBridgePage .simplebar-placeholder {
   max-height: 100%;
   max-width: 100%;
   width: 100%;
   pointer-events: none;
 }
 
-#SpicyLyricsPage .simplebar-height-auto-observer-wrapper {
+#DockBridgePage .simplebar-height-auto-observer-wrapper {
   box-sizing: inherit !important;
   height: 100%;
   width: 100%;
@@ -98,7 +98,7 @@
   flex-basis: 0;
 }
 
-#SpicyLyricsPage .simplebar-height-auto-observer {
+#DockBridgePage .simplebar-height-auto-observer {
   box-sizing: inherit;
   display: block;
   opacity: 0;
@@ -114,7 +114,7 @@
   z-index: -1;
 }
 
-#SpicyLyricsPage .simplebar-track {
+#DockBridgePage .simplebar-track {
   z-index: 1;
   position: absolute;
   right: 0;
@@ -123,7 +123,7 @@
   overflow: hidden;
 }
 
-#SpicyLyricsPage [data-simplebar].simplebar-dragging {
+#DockBridgePage [data-simplebar].simplebar-dragging {
   pointer-events: none;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -131,7 +131,7 @@
   user-select: none;
 }
 
-#SpicyLyricsPage [data-simplebar].simplebar-dragging .simplebar-content {
+#DockBridgePage [data-simplebar].simplebar-dragging .simplebar-content {
   pointer-events: none;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -139,11 +139,11 @@
   user-select: none;
 }
 
-#SpicyLyricsPage [data-simplebar].simplebar-dragging .simplebar-track {
+#DockBridgePage [data-simplebar].simplebar-dragging .simplebar-track {
   pointer-events: all;
 }
 
-#SpicyLyricsPage .simplebar-scrollbar {
+#DockBridgePage .simplebar-scrollbar {
   position: absolute;
   left: 0;
   right: 0;
@@ -161,30 +161,30 @@
   transition: opacity 0.2s 0.5s linear !important;
 }
 
-#SpicyLyricsPage .simplebar-scrollbar.simplebar-visible:before {
+#DockBridgePage .simplebar-scrollbar.simplebar-visible:before {
   opacity: 0.5 !important;
   transition-delay: 0s !important;
   transition-duration: 0s !important;
 }
 
-#SpicyLyricsPage .simplebar-track.simplebar-vertical {
+#DockBridgePage .simplebar-track.simplebar-vertical {
   top: 0;
   width: 11px;
 }
 
-#SpicyLyricsPage .simplebar-scrollbar:before {
+#DockBridgePage .simplebar-scrollbar:before {
   top: 2px;
   bottom: 2px;
   left: 2px;
   right: 2px;
 }
 
-#SpicyLyricsPage .simplebar-track.simplebar-horizontal {
+#DockBridgePage .simplebar-track.simplebar-horizontal {
   left: 0;
   height: 11px;
 }
 
-#SpicyLyricsPage .simplebar-track.simplebar-horizontal .simplebar-scrollbar {
+#DockBridgePage .simplebar-track.simplebar-horizontal .simplebar-scrollbar {
   right: auto;
   left: 0;
   top: 0;
@@ -195,12 +195,12 @@
 }
 
 /* Rtl support */
-#SpicyLyricsPage [data-simplebar-direction="rtl"] .simplebar-track.simplebar-vertical {
+#DockBridgePage [data-simplebar-direction="rtl"] .simplebar-track.simplebar-vertical {
   right: auto;
   left: 0;
 }
 
-#SpicyLyricsPage .simplebar-dummy-scrollbar-size {
+#DockBridgePage .simplebar-dummy-scrollbar-size {
   direction: rtl;
   position: fixed;
   opacity: 0;
@@ -212,34 +212,34 @@
   -ms-overflow-style: scrollbar !important;
 }
 
-#SpicyLyricsPage .simplebar-dummy-scrollbar-size > div {
+#DockBridgePage .simplebar-dummy-scrollbar-size > div {
   width: 200%;
   height: 200%;
   margin: 10px 0;
 }
 
-#SpicyLyricsPage .ScrollbarScrollable .simplebar-track {
+#DockBridgePage .ScrollbarScrollable .simplebar-track {
   transition: opacity 0.2s linear !important;
   opacity: 1;
 }
 
-#SpicyLyricsPage .ScrollbarScrollable .simplebar-track.simplebar-vertical {
+#DockBridgePage .ScrollbarScrollable .simplebar-track.simplebar-vertical {
   right: 5px;
 }
 
-#SpicyLyricsPage .ScrollbarScrollable .simplebar-track.simplebar-horizontal {
+#DockBridgePage .ScrollbarScrollable .simplebar-track.simplebar-horizontal {
   bottom: 5px;
 }
 
-#SpicyLyricsPage .ScrollbarScrollable.hide-scrollbar .simplebar-track {
+#DockBridgePage .ScrollbarScrollable.hide-scrollbar .simplebar-track {
   opacity: 0;
 }
 
-#SpicyLyricsPage [data-simplebar]:not(.simplebar-dragging) .simplebar-content-wrapper {
+#DockBridgePage [data-simplebar]:not(.simplebar-dragging) .simplebar-content-wrapper {
   scroll-behavior: smooth !important;
 }
 
-#SpicyLyricsPage
+#DockBridgePage
   [data-simplebar]:not(.simplebar-dragging)
   .simplebar-content-wrapper.InstantScroll {
   scroll-behavior: auto !important;
