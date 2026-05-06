@@ -7,8 +7,8 @@ It keeps the Spicy Lyrics core pipeline available for lyric state, timing, and m
 Important:
 
 - standalone package: yes
-- standalone replacement for original Spicy Lyrics UI: no
-- intended runtime pairing: original `spicy-lyrics` + `dockbridge.js`
+- original Spicy Lyrics dependency: optional
+- runs with `dockbridge.js` alone, or beside original `spicy-lyrics`
 
 ## What It Does
 
@@ -20,26 +20,26 @@ Important:
 
 ## Intended Setup
 
-Use both of these together:
+You can run either:
 
-1. Original `Spicy Lyrics`
-2. `DockBridge`
+1. `DockBridge` only
+2. `DockBridge` + original `Spicy Lyrics`
 
-That gives you:
+Behavior:
 
-- original Spicy Lyrics page/buttons/renderer inside Spotify
-- DockBridge as the sidecar that sends lyric payloads to SpotifyDock
+- `DockBridge` always provides the stream payloads for SpotifyDock
+- original Spicy Lyrics is optional if you also want its page/buttons/renderer UI
 
 ## Installation
 
-### 1. Install original Spicy Lyrics
+### 1. Optional: install original Spicy Lyrics
 
-Install the original extension the normal way, for example through Spicetify Marketplace or your existing `spicy-lyrics.mjs` setup.
+Install the original extension only if you want its UI inside Spotify (page/buttons/renderer), for example through Spicetify Marketplace or your existing `spicy-lyrics.mjs` setup.
 
 Original project:
 - https://github.com/Spikerko/spicy-lyrics
 
-### 2. Install DockBridge
+### 2. Install DockBridge (required)
 
 #### Option A: Download from Releases
 
@@ -100,7 +100,7 @@ In `SpotifyDock`:
 
 1. Open Settings
 2. Set `Lyrics Source` to `DockBridge`
-3. Keep original Spicy Lyrics enabled
+3. (Optional) Keep original Spicy Lyrics enabled if you also use its UI
 4. Keep `dockbridge.js` enabled
 
 DockBridge will then provide the payloads SpotifyDock needs.
