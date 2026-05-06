@@ -41,6 +41,7 @@ type SpicyLine = {
 
 type CachedTrackColors = { primary: string; secondary: string };
 const trackColorCache = new Map<string, CachedTrackColors>();
+const pendingTrackColorFetches = new Set<string>();
 
 function resolveSide(entry: any, fallback: "left" | "right" | "center" = "center"): "left" | "right" | "center" {
   const read = (value: unknown): "left" | "right" | "center" | null => {
@@ -336,20 +337,40 @@ function getCoverColors(trackId: string, trackUri: string): CachedTrackColors {
   if (cached) return cached;
 
   const fallback: CachedTrackColors = { primary: "88,110,148", secondary: "76,124,108" };
+  if (!trackUri || pendingTrackColorFetches.has(trackId)) return fallback;
   try {
     const extractor = (Spicetify as any)?.colorExtractor;
     if (typeof extractor !== "function") return fallback;
+    pendingTrackColorFetches.add(trackId);
     const p = extractor(trackUri);
-    if (!p || typeof p.then !== "function") return fallback;
+    if (!p || typeof p.then !== "function") {
+      pendingTrackColorFetches.delete(trackId);
+      return fallback;
+    }
     p.then((colors: any) => {
-      const primaryHex = String(colors?.LIGHT_VIBRANT ?? colors?.VIBRANT ?? colors?.DOMINANT ?? "");
-      const secondaryHex = String(colors?.DARK_VIBRANT ?? colors?.MUTED ?? colors?.DARK_MUTED ?? "");
+      const primaryHex = String(
+        colors?.PROMINENT ??
+        colors?.VIBRANT_NON_ALARMING ??
+        colors?.VIBRANT ??
+        colors?.LIGHT_VIBRANT ??
+        ""
+      );
+      const secondaryHex = String(
+        colors?.DARK_VIBRANT ??
+        colors?.DESATURATED ??
+        colors?.VIBRANT_NON_ALARMING ??
+        colors?.PROMINENT ??
+        ""
+      );
       const mapped: CachedTrackColors = {
         primary: hexToRgbString(primaryHex) ?? fallback.primary,
         secondary: hexToRgbString(secondaryHex) ?? fallback.secondary
       };
       trackColorCache.set(trackId, mapped);
-    }).catch(() => undefined);
+      scheduleBridgeColorRefresh();
+    }).catch(() => undefined).finally(() => {
+      pendingTrackColorFetches.delete(trackId);
+    });
   } catch {
     // ignore
   }
@@ -553,6 +574,10 @@ function payloadHash(payload: any): string {
     isPlaying: payload.isPlaying,
     progressBucket: Math.floor((payload.progressMs ?? 0) / PROGRESS_BUCKET_MS),
     heartbeatBucket: Math.floor(Date.now() / STREAM_HEARTBEAT_MS),
+    coverPrimary: payload.coverPrimary,
+    coverSecondary: payload.coverSecondary,
+    themePrimary: payload.themePrimary,
+    themeSecondary: payload.themeSecondary,
     lineCount: lines.length,
     first: lines[0]?.text,
     last: lines[lines.length - 1]?.text
@@ -577,6 +602,13 @@ async function refreshLyricsForCurrentTrack(trackId: string) {
   } catch {
     // best effort; next heartbeat can retry
   }
+}
+
+function scheduleBridgeColorRefresh() {
+  lastPayloadHash = "";
+  queueMicrotask(() => {
+    void flushBridge();
+  });
 }
 
 async function flushBridge() {
