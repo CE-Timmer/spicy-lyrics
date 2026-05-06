@@ -124,7 +124,7 @@ function getTrackPayload() {
       SpotifyPlayer.GetCover("large") ||
       ""
   );
-  const coverColors = getCoverColors(trackId, itemUri);
+  const coverColors = getCoverColors(trackId, itemUri, albumCoverUrl);
   const themeColors = getThemeColors();
   const rawProgressMs = getLiveProgressMs();
   const durationMs = itemDurationMs > 0
@@ -316,6 +316,15 @@ function cssColorToRgbTriplet(value: string): string | null {
   return null;
 }
 
+function rgbaObjectToRgbTriplet(colorObj: any): string | null {
+  const bg = colorObj?.backgroundBase;
+  const r = Number(bg?.red);
+  const g = Number(bg?.green);
+  const b = Number(bg?.blue);
+  if (![r, g, b].every(Number.isFinite)) return null;
+  return `${Math.max(0, Math.min(255, Math.round(r)))},${Math.max(0, Math.min(255, Math.round(g)))},${Math.max(0, Math.min(255, Math.round(b)))}`;
+}
+
 function sanitizeCoverUrl(url: string): string {
   const raw = String(url ?? "").trim();
   if (!raw) return "";
@@ -332,40 +341,96 @@ function sanitizeCoverUrl(url: string): string {
   }
 }
 
-function getCoverColors(trackId: string, trackUri: string): CachedTrackColors {
+function getCoverColors(trackId: string, preferredUri: string, fallbackImageSource: string): CachedTrackColors {
   const cached = trackColorCache.get(trackId);
   if (cached) return cached;
 
   const fallback: CachedTrackColors = { primary: "88,110,148", secondary: "76,124,108" };
-  if (!trackUri || pendingTrackColorFetches.has(trackId)) return fallback;
+  if ((!preferredUri && !fallbackImageSource) || pendingTrackColorFetches.has(trackId)) return fallback;
   try {
     const extractor = (Spicetify as any)?.colorExtractor;
-    if (typeof extractor !== "function") return fallback;
+    const graphQl = (Spicetify as any)?.GraphQL;
+    const canUseGraphQl =
+      typeof graphQl?.Request === "function" &&
+      Boolean(graphQl?.Definitions?.getDynamicColorsByUris);
+    if (typeof extractor !== "function" && !canUseGraphQl) return fallback;
     pendingTrackColorFetches.add(trackId);
-    const p = extractor(trackUri);
-    if (!p || typeof p.then !== "function") {
+    const extractWithFallback = async () => {
+      if (canUseGraphQl && fallbackImageSource) {
+        try {
+          const colorQuery = await graphQl.Request(
+            graphQl.Definitions.getDynamicColorsByUris,
+            {
+              imageUris: [fallbackImageSource]
+            }
+          );
+          const colorResponse = colorQuery?.data?.dynamicColors?.[0];
+          const bestFit =
+            colorResponse?.bestFit === "LIGHT"
+              ? "light"
+              : colorResponse?.bestFit === "DARK"
+                ? "dark"
+                : "dark";
+          const palette = colorResponse?.[bestFit];
+          const primary = rgbaObjectToRgbTriplet(palette?.minContrast);
+          const secondary =
+            rgbaObjectToRgbTriplet(palette?.highContrast) ??
+            rgbaObjectToRgbTriplet(palette?.higherContrast);
+          if (primary || secondary) {
+            return {
+              __dockbridgeGraphQl: true,
+              primary,
+              secondary
+            };
+          }
+        } catch {
+          // fall through to extractor fallback
+        }
+      }
+
+      if (preferredUri) {
+        try {
+          return await extractor(preferredUri);
+        } catch {
+          // fall through to image source
+        }
+      }
+      if (fallbackImageSource) {
+        return await extractor(fallbackImageSource);
+      }
+      throw new Error("no-color-source");
+    };
+    const p = extractWithFallback();
+    if (!p || typeof (p as Promise<unknown>).then !== "function") {
       pendingTrackColorFetches.delete(trackId);
       return fallback;
     }
     p.then((colors: any) => {
-      const primaryHex = String(
-        colors?.PROMINENT ??
-        colors?.VIBRANT_NON_ALARMING ??
-        colors?.VIBRANT ??
-        colors?.LIGHT_VIBRANT ??
-        ""
-      );
-      const secondaryHex = String(
-        colors?.DARK_VIBRANT ??
-        colors?.DESATURATED ??
-        colors?.VIBRANT_NON_ALARMING ??
-        colors?.PROMINENT ??
-        ""
-      );
-      const mapped: CachedTrackColors = {
-        primary: hexToRgbString(primaryHex) ?? fallback.primary,
-        secondary: hexToRgbString(secondaryHex) ?? fallback.secondary
-      };
+      const mapped: CachedTrackColors = colors?.__dockbridgeGraphQl
+        ? {
+            primary: String(colors?.primary ?? "") || fallback.primary,
+            secondary: String(colors?.secondary ?? "") || fallback.secondary
+          }
+        : {
+            primary: hexToRgbString(
+              String(
+                colors?.PROMINENT ??
+                colors?.VIBRANT_NON_ALARMING ??
+                colors?.VIBRANT ??
+                colors?.LIGHT_VIBRANT ??
+                ""
+              )
+            ) ?? fallback.primary,
+            secondary: hexToRgbString(
+              String(
+                colors?.DARK_VIBRANT ??
+                colors?.DESATURATED ??
+                colors?.VIBRANT_NON_ALARMING ??
+                colors?.PROMINENT ??
+                ""
+              )
+            ) ?? fallback.secondary
+          };
       trackColorCache.set(trackId, mapped);
       scheduleBridgeColorRefresh();
     }).catch(() => undefined).finally(() => {
