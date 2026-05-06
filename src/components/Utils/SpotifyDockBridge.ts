@@ -10,7 +10,7 @@ const STREAM_HEARTBEAT_MS = 320;
 const AGGRESSIVE_HEARTBEAT_MS = 180;
 const KEEPALIVE_PULSE_MS = 900;
 const PROGRESS_BUCKET_MS = 250;
-const LYRICS_REFRESH_COOLDOWN_MS = 2000;
+const LYRICS_REFRESH_COOLDOWN_MS = 450;
 
 let started = false;
 let lastPayloadHash = "";
@@ -649,10 +649,10 @@ function payloadHash(payload: any): string {
   });
 }
 
-async function refreshLyricsForCurrentTrack(trackId: string) {
+async function refreshLyricsForCurrentTrack(trackId: string, force = false) {
   const now = Date.now();
   const lastRefreshAt = lastLyricsRefreshAtByTrack.get(trackId) ?? 0;
-  if (now - lastRefreshAt < LYRICS_REFRESH_COOLDOWN_MS) return;
+  if (!force && now - lastRefreshAt < LYRICS_REFRESH_COOLDOWN_MS) return;
   lastLyricsRefreshAtByTrack.set(trackId, now);
 
   const uri =
@@ -663,7 +663,7 @@ async function refreshLyricsForCurrentTrack(trackId: string) {
   try {
     const fetched = await fetchLyrics(String(uri));
     await ApplyLyrics(fetched);
-    lastPayloadHash = "";
+    scheduleBridgeColorRefresh();
   } catch {
     // best effort; next heartbeat can retry
   }
@@ -766,6 +766,7 @@ export function setupSpotifyDockBridge() {
     const uri = String(eventTrack?.uri ?? "");
     const trackId = uri.split(":")[2] ?? "";
     if (trackId) {
+      lastLyricsRefreshAtByTrack.delete(trackId);
       latestSongEventTrack = {
         trackId,
         title: String(eventTrack?.name ?? ""),
@@ -775,6 +776,7 @@ export function setupSpotifyDockBridge() {
         album: String(eventTrack?.album?.name ?? eventTrack?.metadata?.album_title ?? ""),
         durationMs: Number(eventTrack?.duration?.milliseconds ?? eventTrack?.duration_ms ?? 0)
       };
+      void refreshLyricsForCurrentTrack(trackId, true);
     }
     lastPayloadHash = "";
     lastStablePlayback = null;
